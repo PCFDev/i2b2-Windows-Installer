@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema">
+	<datasource jta="false" jndi-name="java:/IMBootStrapDS"
+		pool-name="IMBootStrapDS" enabled="true" use-ccm="false">
+	<connection-url>HIVE_DB_URL</connection-url>
+		<driver-class>HIVE_DB_DRIVER</driver-class>
+		<driver>HIVE_DB_JAR_FILE</driver>
+		<security>
+			<user-name>HIVE_DB_USER</user-name>
+			<password>HIVE_DB_PASS</password>
+		</security>
+		<validation>
+			<validate-on-match>false</validate-on-match>
+			<background-validation>false</background-validation>
+		</validation>
+		<statement>
+			<share-prepared-statements>false</share-prepared-statements>
+		</statement>
+	</datasource>
+	<datasource jta="false" jndi-name="java:/IMDemoDS"
+		pool-name="IMDemoDS" enabled="true" use-ccm="false">
+		<connection-url>IM_DB_URL</connection-url>
+		<driver-class>IM_DB_DRIVER</driver-class>
+		<driver>IM_DB_JAR_FILE</driver>
+		<security>
+			<user-name>IM_DB_USER</user-name>
+			<password>IM_DB_PASS</password>
+		</security>
+		<validation>
+			<validate-on-match>false</validate-on-match>
+			<background-validation>false</background-validation>
+		</validation>
+		<statement>
+			<share-prepared-statements>false</share-prepared-statements>
+		</statement>
+	</datasource>
+</datasources>

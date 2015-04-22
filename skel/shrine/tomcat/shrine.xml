@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context swallowOutput="true">
+
+    <Resource name="jdbc/shrineDB" auth="Container" type="javax.sql.DataSource"
+               maxActive="100" maxIdle="30" maxWait="10000"
+               username="SHRINE_SQL_USER" password="SHRINE_SQL_PASSWORD"
+               driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+               url="jdbc:sqlserver://SHRINE_SQL_SERVER:1433;databaseName=SHRINE_SQL_DB"
+               testOnBorrow="true" validationQuery="SELECT 1"/>
+</Context>
