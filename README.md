@@ -10,7 +10,14 @@ To use this installer a few things need to be in place before you begin.
 
 Once your server is ready follow these steps:
 
-1. Download 
+1. Click the **Download ZIP** button on the right of this page
+2. Extract the zip on the windows server
+3. Edit the **config-i2b2.ps1** file and set values for the following variables:
+	1. **DEFAULT\_DB\_SERVER**
+	2. **DEFAULT\_DB\_ADMIN\_USER**
+	3. **DEFAULT\_DB\_ADMIN\_PASS**
+4. Open PowerShell as an Administrator
+5. Navigate to the folder the zip extracted to and  run: **.\install.ps1** 
 
 
 ##Current Progress ##
