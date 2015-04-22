@@ -112,7 +112,7 @@ if($InstallCells -eq $true){
 }
 
 if($InstallShrine -eq $true){
-    . .\install_shrine.ps1
+    . .\install-shrine.ps1
 }
 
 #clean up after ourself
