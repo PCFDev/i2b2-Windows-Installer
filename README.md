@@ -21,7 +21,9 @@ Once your server is ready follow these steps:
 
 
 ## Additional Information ##
-Please check out the [wiki](/wiki "wiki") for more information
+There are many configuration options available with this installer.
+
+Please check out the [wiki](https://github.com/PCFDev/i2b2-Windows-Installer/wiki "wiki") for more information
 
 
 ##Care to contribute?##

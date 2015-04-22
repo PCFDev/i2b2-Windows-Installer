@@ -227,7 +227,7 @@ function installShrine{
     echo "Configuring tomcat server settings..."
 
     #Interpolate tomcat_server_8.xml with common settings
-    interpolate_file .\skel\shrine\tomcat\tomcat_server_8.xml "SHRINE_PORT" $_SHRINE_PORT |
+    interpolate_file $__skelDirectory\shrine\tomcat\tomcat_server_8.xml "SHRINE_PORT" $_SHRINE_PORT |
         interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT | 
         interpolate "KEYSTORE_FILE" "$_SHRINE_HOME\shrine.keystore" |
         interpolate "KEYSTORE_PASSWORD" "changeit" | Out-File -Encoding utf8 $_SHRINE_HOME\setup\ready\server.xml
@@ -236,21 +236,21 @@ function installShrine{
     echo "Configuring Shrine cell files..."
 
     #Interpolate cell_config_data.js with common settings
-    interpolate_file .\skel\shrine\tomcat\cell_config_data.js "SHRINE_IP" $_SHRINE_IP |
+    interpolate_file $__skelDirectory\shrine\tomcat\cell_config_data.js "SHRINE_IP" $_SHRINE_IP |
         interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT > $_SHRINE_HOME\setup\ready\cell_config_data.js
 
     #Interpolate shrine.xml with common settings
-    interpolate_file .\skel\shrine\tomcat\shrine.xml "SHRINE_SQL_USER" $_SHRINE_MSSQL_USER |
+    interpolate_file $__skelDirectory\shrine\tomcat\shrine.xml "SHRINE_SQL_USER" $_SHRINE_MSSQL_USER |
         interpolate "SHRINE_SQL_PASSWORD" $_SHRINE_MSSQL_PASSWORD |
         interpolate "SHRINE_SQL_SERVER" $_SHRINE_MSSQL_SERVER |
         interpolate "SHRINE_SQL_DB" $_SHRINE_MSSQL_DB > $_SHRINE_HOME\setup\ready\shrine.xml
 
     #Interpolate i2b2_config_data.js with common settings
-    interpolate_file .\skel\shrine\tomcat\i2b2_config_data.js "I2B2_PM_IP" $_I2B2_PM_IP |
+    interpolate_file $__skelDirectory\shrine\tomcat\i2b2_config_data.js "I2B2_PM_IP" $_I2B2_PM_IP |
         interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME > $_SHRINE_HOME\setup\ready\i2b2_config_data.js
 
     #Interpolate shrine.conf with common settings
-    interpolate_file .\skel\shrine\tomcat\shrine.conf "I2B2_PM_IP" $_I2B2_PM_IP | interpolate "I2B2_ONT_IP" $_I2B2_ONT_IP |
+    interpolate_file $__skelDirectory\shrine\tomcat\shrine.conf "I2B2_PM_IP" $_I2B2_PM_IP | interpolate "I2B2_ONT_IP" $_I2B2_ONT_IP |
         interpolate "SHRINE_ADAPTER_I2B2_DOMAIN" $_SHRINE_ADAPTER_I2B2_DOMAIN |
         interpolate "SHRINE_ADAPTER_I2B2_USER" $_SHRINE_ADAPTER_I2B2_USER | 
         interpolate "SHRINE_ADAPTER_I2B2_PASSWORD" $_SHRINE_ADAPTER_I2B2_PASSWORD |
@@ -273,7 +273,7 @@ function installShrine{
     Copy-Item $_SHRINE_HOME\setup\shrine.war $_SHRINE_TOMCAT_HOME\webapps\shrine.war
     Copy-Item $_SHRINE_HOME\setup\shrine-proxy.war $_SHRINE_TOMCAT_HOME\webapps\shrine-proxy.war
     Copy-Item $_SHRINE_HOME\setup\AdapterMappings.xml $_SHRINE_TOMCAT_LIB
-    Copy-Item .\skel\shrine\sqlserver\sqljdbc4.jar $_SHRINE_TOMCAT_LIB\sqljdbc4.jar
+    Copy-Item $__skelDirectory\shrine\sqlserver\sqljdbc4.jar $_SHRINE_TOMCAT_LIB\sqljdbc4.jar
 
     echo "move complete."
     echo "Cleaning Up..."

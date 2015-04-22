@@ -6,7 +6,8 @@ $_SHRINE_VERSION = "1.18.2"
 
 $_I2B2_DOMAIN_ID = "i2b2demo"
 
-$_SHRINE_IP = ((Invoke-WebRequest "http://checkip.dyndns.com").ParsedHtml.Body.innerHTML -split ': ')[1]
+#$_SHRINE_IP = ((Invoke-WebRequest "http://checkip.dyndns.com").ParsedHtml.Body.innerHTML -split ': ')[1]
+$_SHRINE_IP = "localhost"
 $_SHRINE_MSSQL_SERVER = "localhost"
 
 $_NEXUS_URL_BASE = "http://repo.open.med.harvard.edu/nexus/content/groups/public/net/shrine"
@@ -64,27 +65,6 @@ $_KEYSTORE_STATE = "MO"
 
 #Country where the node resides; will be included in generated cryptographic certificate.
 $_KEYSTORE_COUNTRY = "US"
-
-#The host at which MySQL is accessible.  MySQL is needed by Shrine for logging purposes.
-#$_SHRINE_MYSQL_HOST = "localhost"
-
-#The MySQL user Shrine should log in as.
-#$_SHRINE_MYSQL_USER = "shrine"
-
-#The password for the MySQL user that Shrine should log in as.
-#$_SHRINE_MYSQL_PASSWORD = "demouser"
-
-#The host at which MSSQL is accessible.
-$_SHRINE_MSSQL_HOST = "localhost"
-
-#The database name for the MSSQL server instance
-$_SHRINE_MSSQL_DB = "shrine"
-
-#The MSSQL user Shrine should log in as.
-$_SHRINE_MSSQL_USER = "shrine_installer"
-
-#The password for the MSSSQL user that Shrine should log in as.
-$_SHRINE_MSSQL_PASSWORD = "demouser"
 
 #The i2b2 user Shrine should use when making queries to an i2b2 hive.
 $_SHRINE_ADAPTER_I2B2_USER = "demo"
