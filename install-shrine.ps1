@@ -361,7 +361,7 @@ function updateDB{
 
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\configure_pm.sql DB_NAME $PM_DB_NAME |
         interpolate SHRINE_USER $SHRINE_DB_USER |
-        interpolate SHRINE_PASSWORD_CRYPTED $SHRINE_DB_PASS |
+        interpolate SHRINE_PASSWORD_CRYPTED (hash $SHRINE_DB_PASS) |
         interpolate SHRINE $SHRINE_DB_PROJECT |
         interpolate SHRINE_IP $_SHRINE_IP |
         interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT
