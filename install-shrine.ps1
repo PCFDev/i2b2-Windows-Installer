@@ -13,44 +13,13 @@ Install tomcat 8 and shrine on Windows Server
 
 
 .DESCRIPTION
-This script will download the correctversion of Apache Tomcat 8.0. It will then unzip to 
+This script will download the correct version of Apache Tomcat 8.0. It will then unzip to 
 another directory and copy the contents into the shrine\tomcat directory beneath the 
-user-specified or default directory. It will also install Tomcat 8.0 as a service running 
-automatically.
-
-.PARAMETER $tomcat_path
-Define a path for tomcat to be extracted to. Avoid directory locations that include spaces
-within their paths.
-
-.PARAMETER $InstallService
-Tomcat is installed as a Windows service by default. Using the -s alias and $false will 
-keep Tomcat from being installed as a service.
-
-.EXAMPLE
-.\tomcat_install -s $false
-Skips the installation of Tomcat as a Windows service.
-
-.EXAMPLE
-.\tomcat_install C:\newDirectory
-tomcat_install will extract Tomcat to the C:\newDirectory\shrine\tomcat directory and
-install Tomcat as a service.
-
-.EXAMPLE
-.\tomcat_install C:\otherDirectory -s $false
-tomcat_install will extract Tomcat to the C:\otherDirectory\shrine\tomcat directory and
-does not install Tomcat as a service.
+default directory. It will also install Tomcat 8.0 as a service running automatically.
 
 .EXAMPLE
 PowerShell will number them for you when it displays your help text to a user.
 #>
-
-
-[CmdletBinding()]
-Param(
-    [parameter(Mandatory=$false)]
-	[AllowEmptyString()]
-	[string]$tomcat_path
-)
 
 
 #Include functions.ps1 for unzip functionality
@@ -64,7 +33,6 @@ function prepareInstall(){
 
     echo "Preparing for installation..."
 
-    #______________________________________________________________________________
 
     #Create temp downloads folder
     echo "creating directories..."
@@ -93,7 +61,7 @@ function prepareInstall(){
     }
     echo "Shrine setup locations created."
 
-#_____________________________________________
+
 
     #Check for Java
     if((isJavaInstalled) -eq $false)
@@ -110,7 +78,6 @@ function prepareInstall(){
     unzip $_SHRINE_HOME\setup\subversion.zip $_SHRINE_HOME\setup\svn
     echo "Subversion is installed. Moving on..."
 
-#________________________________________________________________________________________
 
 
     echo "Setting variable paths..."
@@ -287,7 +254,7 @@ function installShrine{
 
     Restart-Service Tomcat8
 
-    echo "Shrine installation complete!"
+    echo "Shrine client installation complete!"
     }
 
 function createCert{
