@@ -1,4 +1,6 @@
 #I2B2 Windows Installer
+
+[![Join the chat at https://gitter.im/PCFDev/i2b2-Windows-Installer](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PCFDev/i2b2-Windows-Installer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Scripts to automate installing I2B2 in a windows environment
 
 ## Getting Started ##
