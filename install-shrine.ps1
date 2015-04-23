@@ -311,5 +311,6 @@ installTomcatService
 createCert
 installShrine
 
+.\shrine-data.ps1
     
 formatElapsedTime $__timer.Elapsed

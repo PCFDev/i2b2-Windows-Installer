@@ -1,9 +1,9 @@
--- modified to fit Postgres 2014-07-21
 
--- DELETE potential conflict entry from previous install, just to be safe.
+
+
 delete from I2B2_DB_SCHEMA.TABLE_ACCESS where C_TABLE_CD = 'SHRINE';
 
--- Create a new entry in table access allowing this Ontology to be used for project SHRINE
+
 INSERT into I2B2_DB_SCHEMA.TABLE_ACCESS
 ( C_TABLE_CD,
   C_TABLE_NAME,

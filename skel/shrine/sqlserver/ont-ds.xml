@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss Server Configuration                                           -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<!-- $Id: ont-ds.xml,v 1.5 2008/10/01 20:17:12 lcp5 Exp $ -->
+
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema">
+    <datasource jta="false" jndi-name="java:/I2B2_DB_HIVE_DATASOURCE_NAME"
+    		pool-name="I2B2_DB_HIVE_DATASOURCE_NAME" enabled="true" use-ccm="false">
+    		<connection-url>I2B2_DB_HIVE_JDBC_URL</connection-url>
+        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+        <driver>sqljdbc4.jar</driver>
+    		<security>
+    			<user-name>I2B2_DB_HIVE_USER</user-name>
+    			<password>I2B2_DB_HIVE_PASSWORD</password>
+    		</security>
+        <validation>
+			      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"></valid-connection-checker>
+            <validate-on-match>false</validate-on-match>
+		    </validation>
+    		<statement>
+    			<share-prepared-statements>false</share-prepared-statements>
+    		</statement>
+    	</datasource>
+	<datasource jta="false" jndi-name="java:/I2B2_DB_ONT_DATASOURCE_NAME"
+		pool-name="I2B2_DB_ONT_DATASOURCE_NAME" enabled="true" use-ccm="false">
+		<connection-url>I2B2_DB_ONT_JDBC_URL</connection-url>
+    <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+    <driver>sqljdbc4.jar</driver>
+		<security>
+			<user-name>I2B2_DB_ONT_USER</user-name>
+			<password>I2B2_DB_ONT_PASSWORD</password>
+		</security>
+    <validation>
+        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"></valid-connection-checker>
+        <validate-on-match>false</validate-on-match>
+    </validation>
+		<statement>
+			<share-prepared-statements>false</share-prepared-statements>
+		</statement>
+	</datasource>
+    <datasource jta="false" jndi-name="java:/I2B2_DB_SHRINE_ONT_DATASOURCE_NAME"
+    		pool-name="I2B2_DB_SHRINE_ONT_DATASOURCE_NAME" enabled="true" use-ccm="false">
+    		<connection-url>I2B2_DB_SHRINE_ONT_JDBC_URL</connection-url>
+        <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+        <driver>sqljdbc4.jar</driver>
+    		<security>
+    			<user-name>I2B2_DB_SHRINE_ONT_USER</user-name>
+    			<password>I2B2_DB_SHRINE_ONT_PASSWORD</password>
+    		</security>
+        <validation>
+			      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"></valid-connection-checker>
+            <validate-on-match>false</validate-on-match>
+		    </validation>
+    		<statement>
+    			<share-prepared-statements>false</share-prepared-statements>
+    		</statement>
+    	</datasource>
+	    <datasource jta="false" jndi-name="java:/OntologyDemoDS2"
+                pool-name="OntologyDemoDS2" enabled="true" use-ccm="false">
+                <connection-url>I2B2_DB_ONT_JDBC_URL</connection-url>
+                <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+                <driver>sqljdbc4.jar</driver>
+                <security>
+                        <user-name>i2b2metadata</user-name>
+                        <password>demouser</password>
+                </security>
+                <validation>
+        			      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"></valid-connection-checker>
+                    <validate-on-match>false</validate-on-match>
+        		    </validation>
+                <statement>
+                        <share-prepared-statements>false</share-prepared-statements>
+                </statement>
+        </datasource>
+</datasources>
