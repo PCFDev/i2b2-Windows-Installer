@@ -28,6 +28,44 @@
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
+		
+			<div>
+				<h3>
+				<a id="user-content-getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h1>
+
+				<p>To use this installer a few things need to be in place before you begin.</p>
+
+				<ol class="task-list">
+				<li>You must have a windows server with internet connectivity</li>
+				<li>PowerShell 4.0 or higher must be installed on the server</li>
+				<li>You must be able to connect to a MSSQL server with an account that is a member of the sysadmin server role from the windows server</li>
+				</ol>
+
+				<p>Once your server is ready follow these steps:</p>
+
+				<ol class="task-list">
+				<li>Click the <strong>Download ZIP</strong> button on the right of this page</li>
+				<li>Extract the zip on the windows server</li>
+				<li>Edit the <strong>config-i2b2.ps1</strong> file and set values for the following variables:
+
+				<ul class="task-list">
+				<li><strong>DEFAULT_DB_SERVER</strong></li>
+				<li><strong>DEFAULT_DB_ADMIN_USER</strong></li>
+				<li><strong>DEFAULT_DB_ADMIN_PASS</strong></li>
+				</ul>
+				</li>
+				<li>Open PowerShell as an Administrator</li>
+				<li>Navigate to the folder the zip extracted to and  run: <strong>.\install.ps1</strong> </li>
+				</ol>
+
+				<h2>
+				<a id="user-content-care-to-contribute" class="anchor" href="#care-to-contribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Care to contribute?</h2>
+
+				<hr>
+
+				<p>If you are interested in contributing to the cause please feel free to contact us : appdev ( at ) kids.wustl.edu</p>
+				</div>
+		
           <h3>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
 
