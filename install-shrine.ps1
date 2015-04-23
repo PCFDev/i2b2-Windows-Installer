@@ -16,24 +16,7 @@ Install tomcat 8 and shrine on Windows Server
 This script will download the correct version of Apache Tomcat 8.0. It will then unzip to 
 another directory and copy the contents into the shrine\tomcat directory beneath the 
 default directory. It will also install Tomcat 8.0 as a service running automatically.
-
-.PARAMETER $tomcat_path
-Define a path for tomcat to be extracted to. Avoid directory locations that include spaces
-within their paths.
-
-.EXAMPLE
-.\tomcat_install C:\newDirectory
-tomcat_install will extract Tomcat to the C:\newDirectory\shrine\tomcat directory and
-install Tomcat as a service.
 #>
-
-
-[CmdletBinding()]
-Param(
-    [parameter(Mandatory=$false)]
-	[AllowEmptyString()]
-	[string]$tomcat_path
-)
 
 #Include functions.ps1 for unzip functionality
 #Include configurations.ps1 for file download url
@@ -47,6 +30,7 @@ function prepareInstall(){
 
     echo "Preparing for installation..."
 
+    $Env:TOMCAT = "C:\opt"
 
     #Create temp downloads folder
     echo "creating directories..."
@@ -91,22 +75,6 @@ function prepareInstall(){
     Invoke-WebRequest  $SVNUrl -OutFile $_SHRINE_HOME\setup\subversion.zip -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
     unzip $_SHRINE_HOME\setup\subversion.zip $_SHRINE_HOME\setup\svn
     echo "Subversion is installed. Moving on..."
-
-
-
-    echo "Setting variable paths..."
-    #If given no argument for install directory, set default directory C:\opt
-    if($tomcat_path -eq "")
-    {
-        $Env:TOMCAT ="C:\opt"
-        echo "install path set to C:\opt"
-    }
-    else
-    {
-        $Env:TOMCAT = $tomcat_path
-        echo "install path set to $Env:TOMCAT"
-    }
-
 
     echo "Finished preparing."
 }
