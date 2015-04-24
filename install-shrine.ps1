@@ -195,7 +195,8 @@ function installShrine{
 
     #Interpolate i2b2_config_data.js with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\i2b2_config_data.js "I2B2_PM_IP" $_I2B2_PM_IP |
-        interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME > $_SHRINE_HOME\setup\ready\i2b2_config_data.js
+        interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME |
+        interpolate "I2B2_DOMAIN_ID" $I2B2_DOMAIN > $_SHRINE_HOME\setup\ready\i2b2_config_data.js
 
     #Interpolate shrine.conf with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\shrine.conf "I2B2_PM_IP" $_I2B2_PM_IP | interpolate "I2B2_ONT_IP" $_I2B2_ONT_IP |
@@ -327,7 +328,7 @@ function updateDatasources{
         interpolate I2B2_DB_ONT_PASSWORD $ONT_DB_PASS |
         interpolate I2B2_DB_SHRINE_ONT_DATASOURCE_NAME $SHRINE_DB_DATASOURCE |
         interpolate I2B2_DB_SHRINE_ONT_JDBC_URL $SHRINE_DB_URL |
-        interpolate I2B2_DB_SHRINE_ONT_USER $SHRINE_DB_USER |
+        interpolate I2B2_DB_SHRINE_ONT_USER $ONT_DB_USER |
         interpolate I2B2_DB_SHRINE_ONT_PASSWORD $SHRINE_DB_PASS | sc $env:JBOSS_HOME\standalone\deployments\ont-ds.xml -Force
 
         echo "complete."
@@ -374,9 +375,12 @@ function updateDB{
 
     #Now using ontConn for ontology edits
 
-    #Create URL for shrine.sql download
+    #Create URL for sql downloads
     $SHRINE_SQL_FILE_URL_SUFFIX = "SHRINE_Demo_Downloads/ShrineDemo.sql"
     $SHRINE_SQL_FILE_URL = "$_SHRINE_SVN_URL_BASE/ontology/$SHRINE_SQL_FILE_URL_SUFFIX"
+    $ADAPTER_SQL_FILE_URL = "$_SHRINE_SVN_URL_BASE/code/adapter/src/main/resources/adapter.sql"
+    $HUB_SQL_FILE_URL = "$_SHRINE_SVN_URL_BASE/code/broadcaster-aggregator/src/main/resources/hub.sql"
+    $AUDIT_TABLE_SQL_FILE_URL = "$_SHRINE_SVN_URL_BASE/code/service/src/main/resources/create_broadcaster_audit_table.sql"
 
     echo "creating tables..."
 
@@ -402,9 +406,9 @@ function updateDB{
     echo "complete."
     echo "downloading and running Shrine Ontology..."
 
-    #Download shrine.sql file, create sql command, execute
-    #consolidate this?
+    #Download sql files
     Invoke-WebRequest $SHRINE_SQL_FILE_URL -OutFile $__skelDirectory\shrine\sqlserver\shrine.sql
+
     $sql = Get-Content "$__skelDirectory\shrine\sqlserver\shrine.sql"
 
     #Must set CommandTimeout due to size of shrine.sql
@@ -413,6 +417,27 @@ function updateDB{
     $cmd.CommandText = $sql
     $cmd.ExecuteNonQuery() > $null
     
+    $sql = Get-Content "$__skelDirectory\shrine\sqlserver\adapter.sql"
+
+    #Must set CommandTimeout due to size of shrine.sql
+    $cmd = $ontConn.CreateCommand()
+    $cmd.CommandText = $sql
+    $cmd.ExecuteNonQuery() > $null
+
+    $sql = Get-Content "$__skelDirectory\shrine\sqlserver\hub.sql"
+
+    #Must set CommandTimeout due to size of shrine.sql
+    $cmd = $ontConn.CreateCommand()
+    $cmd.CommandText = $sql
+    $cmd.ExecuteNonQuery() > $null
+
+    $sql = Get-Content "$__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql"
+
+    #Must set CommandTimeout due to size of shrine.sql
+    $cmd = $ontConn.CreateCommand()
+    $cmd.CommandText = $sql
+    $cmd.ExecuteNonQuery() > $null
+
     echo "Shrine Ontology added."
     echo "ontology records updated."
     echo "cleaning up ontology files..."
