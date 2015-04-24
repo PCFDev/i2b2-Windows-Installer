@@ -12,7 +12,7 @@ $__webclientInstallFolder = "c:\inetpub\wwwroot"
 $__currentDirectory = (Get-Item -Path ".\" -Verbose).FullName
 $__skelDirectory = $__currentDirectory + "\skel"
 $__tempFolder = $__currentDirectory + "\.temp"
-$__sourceCodeRootFolder = $__rootFolder + "\i2b2"
+$__sourceCodeRootFolder = $__tempFolder + "\i2b2"
 
 
 $__sourceCodeZipFile = $__skelDirectory + "\i2b2\i2b2core-src-1704.zip"

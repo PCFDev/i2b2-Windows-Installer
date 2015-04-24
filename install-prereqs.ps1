@@ -152,7 +152,7 @@ function installIIS {
 
 function installPHP{
 
-    if((Test-Path $__phpInstallDirectory) -eq $false){
+    if((Test-Path $__phpInstallFolder) -eq $false){
 
         echo "Downloading PHP"      
         #Reference: http://php.net/manual/en/install.windows.manual.php
