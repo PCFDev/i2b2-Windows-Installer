@@ -1,9 +1,4 @@
---#https://open.med.harvard.edu/svn/shrine/releases/1.18.2/code/adapter/src/main/resources/adapter.sql
---removed engine=innodb default charset=latin1; from each create table
---changed auto_increment to identity(1,1)
---changed timestamp types to datetime
---broke out index creatation into seperate commands
---changed enum types to contraints
+USE DB_NAME;
 
 create table SHRINE_QUERY(
   [id] [int] not null IDENTITY(1,1),

@@ -1,4 +1,5 @@
---https://open.med.harvard.edu/svn/shrine/releases/1.18.2/code/service/src/main/resources/create_broadcaster_audit_table.sql
+USE DB_NAME;
+
 CREATE TABLE [dbo].[AUDIT_ENTRY](
 	[AUDIT_ENTRY_ID] [int] IDENTITY(1,1) NOT NULL,
 	[PROJECT] [varchar](254) NOT NULL,

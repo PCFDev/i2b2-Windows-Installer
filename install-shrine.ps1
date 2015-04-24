@@ -336,7 +336,6 @@ function updateDatasources{
 
 }
 
-
 function updateDB{
     
     echo "Beginning Shrine updates to I2B2 DB..."
@@ -364,6 +363,24 @@ function updateDB{
         interpolate SHRINE $SHRINE_DB_PROJECT |
         interpolate SHRINE_IP $_SHRINE_IP |
         interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT
+    
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = $sql
+    $cmd.ExecuteNonQuery() > $null
+    
+    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\adapter.sql DB_NAME $SHRINE_DB_NAME 
+    
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = $sql
+    $cmd.ExecuteNonQuery() > $null
+    
+    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\hub.sql DB_NAME $SHRINE_DB_NAME 
+    
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = $sql
+    $cmd.ExecuteNonQuery() > $null
+
+    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql DB_NAME $SHRINE_DB_NAME 
     
     $cmd = $conn.CreateCommand()
     $cmd.CommandText = $sql
@@ -414,27 +431,6 @@ function updateDB{
     #Must set CommandTimeout due to size of shrine.sql
     $cmd = $ontConn.CreateCommand()
     $cmd.CommandTimeout = 0
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
-    
-    $sql = Get-Content "$__skelDirectory\shrine\sqlserver\adapter.sql"
-
-    #Must set CommandTimeout due to size of shrine.sql
-    $cmd = $ontConn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
-
-    $sql = Get-Content "$__skelDirectory\shrine\sqlserver\hub.sql"
-
-    #Must set CommandTimeout due to size of shrine.sql
-    $cmd = $ontConn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
-
-    $sql = Get-Content "$__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql"
-
-    #Must set CommandTimeout due to size of shrine.sql
-    $cmd = $ontConn.CreateCommand()
     $cmd.CommandText = $sql
     $cmd.ExecuteNonQuery() > $null
 

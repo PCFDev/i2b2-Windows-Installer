@@ -1,8 +1,4 @@
---#https://open.med.harvard.edu/svn/shrine/releases/1.18.2/code/broadcaster-aggregator/src/main/resources/hub.sql
---removed engine=innodb default charset=latin1; from each create table
---changed auto_increment to identity(1,1)
---changed timestamp types to datetime
---broke out index creatation into seperate commands
+USE DB_NAME;
 
 create table HUB_QUERY (
 	NETWORK_QUERY_ID bigint not null,
