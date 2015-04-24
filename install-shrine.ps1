@@ -244,8 +244,8 @@ function createCert{
 
     echo "Generating Shrine keystore and SSL certificate..."
 
-    keytool -genkeypair -keysize 2048 -alias $_KEYSTORE_ALIAS -dname "CN=$_KEYSTORE_ALIAS, OU=$_KEYSTORE_HUMAN, O=SHRINE Network, L=$_KEYSTORE_CITY, S=$_KEYSTORE_STATE, C=$_KEYSTORE_COUNTRY" -keyalg RSA -keypass $_KEYSTORE_PASSWORD -storepass $_KEYSTORE_PASSWORD -keystore $_KEYSTORE_FILE -validity 7300
-    keytool -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer"
+    & "$Env:JAVA_HOME\bin\keytool.exe" -genkeypair -keysize 2048 -alias $_KEYSTORE_ALIAS -dname "CN=$_KEYSTORE_ALIAS, OU=$_KEYSTORE_HUMAN, O=SHRINE Network, L=$_KEYSTORE_CITY, S=$_KEYSTORE_STATE, C=$_KEYSTORE_COUNTRY" -keyalg RSA -keypass $_KEYSTORE_PASSWORD -storepass $_KEYSTORE_PASSWORD -keystore $_KEYSTORE_FILE -validity 7300
+    & "$Env:JAVA_HOME\bin\keytool.exe" -noprompt -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer"
 
     echo "complete."
 }
@@ -310,10 +310,10 @@ function updateDatasources{
     echo "creating backup of datasource files..."
 
     #making backup of datasource file
-    mkdir $__skelDirectory\shrine\sqlserver\backup
-    Copy-Item $env:JBOSS_HOME\standalone\deployments\ont-ds.xml $__skelDirectory\shrine\sqlserver\backup\ont-ds.xml
+    mkdir $_SHRINE_HOME\Datasource_Backup
+    Copy-Item $env:JBOSS_HOME\standalone\deployments\ont-ds.xml $_SHRINE_HOME\Datasource_Backup\ont-ds.xml
 
-    echo "complete."
+    echo "datasource files backed up to $SHRINE_HOME\Datasource_Backup folder."
     echo "configuring new ontology datasource file..."
 
     #configuring template to replace current ont-ds.xml
@@ -351,9 +351,7 @@ function updateDB{
         interpolate I2B2_DB_CRC_DATASOURCE_NAME $CRC_DB_DATASOURCE
 
     $cmd = $conn.CreateCommand()
-
     $cmd.CommandText = $sql
-
     $cmd.ExecuteNonQuery() > $null
 
     echo "complete."
@@ -367,11 +365,10 @@ function updateDB{
         interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT
     
     $cmd = $conn.CreateCommand()
-
     $cmd.CommandText = $sql
-
     $cmd.ExecuteNonQuery() > $null
-    
+    $cmd.Dispose()
+
     echo "complete"
     echo "updating ontology records..." 
 
@@ -411,8 +408,8 @@ function updateDB{
     $sql = Get-Content "$__skelDirectory\shrine\sqlserver\shrine.sql"
 
     #Must set CommandTimeout due to size of shrine.sql
-    $cmd.CommandTimeout = 0
     $cmd = $ontConn.CreateCommand()
+    $cmd.CommandTimeout = 0
     $cmd.CommandText = $sql
     $cmd.ExecuteNonQuery() > $null
     
@@ -425,63 +422,9 @@ function updateDB{
     Remove-Item $__skelDirectory\shrine\sqlserver\shrine.sql
 
     echo "complete."
+
     echo "i2b2 Database Tables updated."
 }
-
-
-function createConnections{
-
-    echo "creating database connections..."
-    echo "Verifying connection to $DEFAULT_DB_SERVER database server - master database"
-    
-    #Create DB connection to create shrine_query_history database, create shrine db_owner, and write to PM and Hive DBs
-    $conn = New-Object System.Data.SqlClient.SqlConnection
-    $conn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=master;Uid=$DEFAULT_DB_ADMIN_USER;Pwd=$DEFAULT_DB_ADMIN_PASS;"
- 
-    try{    
-        $conn.Open() > $null    
-        echo "Connected to $DEFAULT_DB_SERVER : master"
-    }
-    catch {
-        echo "Could not connect to database server: $DEFAULT_DB_SERVER : master"
-        exit -1
-    }
-
-
-    echo "Verifying connection to $DEFAULT_DB_SERVER database server - $ONT_DB_NAME database"
-    #Create DB connection to update ontology tables
-    $ontConn = New-Object System.Data.SqlClient.SqlConnection
-    $ontConn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=$ONT_DB_NAME;Uid=$ONT_DB_USER;Pwd=$ONT_DB_PASS;"
-   
-    try{    
-        $ontConn.Open() > $null    
-        echo "Connected to $DEFAULT_DB_SERVER : $ONT_DB_NAME"
-    }
-    catch {
-        echo "Could not connect to database server: $DEFAULT_DB_SERVER : $ONT_DB_NAME"
-        exit -1
-    }
-
-    echo "database connections successfully created."
-}
-
-
-function closeConnections{
-
-    echo "closing database connections..."
-
-    $conn.Close()
-    $conn.Dispose()
-    $ontConn.Close()
-    $ontConn.Dispose()
-
-    echo "connections closed."
-
-}
-
-
-
-$__timer = [Diagnostics.Stopwatch]::StartNew()
 
 prepareInstall
 
@@ -495,12 +438,50 @@ installShrine
 echo "Shrine client installation complete!"
 echo "Starting Shrine Data Installation..."
 
-createConnections
+echo "creating database connections..."
+echo "Verifying connection to $DEFAULT_DB_SERVER database server - master database"
+    
+#Create DB connection to create shrine_query_history database, create shrine db_owner, and write to PM and Hive DBs
+$conn = New-Object System.Data.SqlClient.SqlConnection
+$conn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=master;Uid=$DEFAULT_DB_ADMIN_USER;Pwd=$DEFAULT_DB_ADMIN_PASS;"
+ 
+try{    
+    $conn.Open() > $null    
+    echo "Connected to $DEFAULT_DB_SERVER : master"
+}
+catch {
+    echo "Could not connect to database server: $DEFAULT_DB_SERVER : master"
+    exit -1
+}
+
+
+echo "Verifying connection to $DEFAULT_DB_SERVER database server - $ONT_DB_NAME database"
+#Create DB connection to update ontology tables
+$ontConn = New-Object System.Data.SqlClient.SqlConnection
+$ontConn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=$ONT_DB_NAME;Uid=$ONT_DB_USER;Pwd=$ONT_DB_PASS;"
+   
+try{    
+    $ontConn.Open() > $null    
+    echo "Connected to $DEFAULT_DB_SERVER : $ONT_DB_NAME"
+}
+catch {
+    echo "Could not connect to database server: $DEFAULT_DB_SERVER : $ONT_DB_NAME"
+    exit -1
+}
+
+echo "database connections successfully created."
+
 createShrineDB
 updateDB
 updateDatasources
-closeConnections
+
+echo "closing database connections..."
+
+$conn.Close()
+$conn.Dispose()
+$ontConn.Close()
+$ontConn.Dispose()
+
+echo "connections closed."
 
 echo "Shrine Data Installation complete!"
-    
-formatElapsedTime $__timer.Elapsed
