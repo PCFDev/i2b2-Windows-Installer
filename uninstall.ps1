@@ -213,15 +213,9 @@ function removeDatabases{
 function removeDatabase($dbname){
     echo "Removing database: $dbname"
 
-    $sql = interpolate_file $__skelDirectory\i2b2\data\$DEFAULT_DB_TYPE\remove_database.sql DB_NAME $dbname
+    $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\remove_database.sql DB_NAME $dbname
 
-    $cmd =  $conn.CreateCommand()
-    
-    $cmd.CommandText = $sql
-
-    $cmd.ExecuteNonQuery() > $null
-
-    $cmd.Dispose()
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
     echo "Database $dbname removed"
 
@@ -230,18 +224,12 @@ function removeDatabase($dbname){
 function removeUser($dbname, $user, $pass, $schema){
     echo "Removing user: $user"
 
-    $sql = interpolate_file $__skelDirectory\i2b2\data\$DEFAULT_DB_TYPE\remove_user.sql DB_NAME $dbname |
+    $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\remove_user.sql DB_NAME $dbname |
         interpolate DB_USER $user |
         interpolate DB_PASS $pass |
         interpolate DB_SCHEMA $schema    
 
-    $cmd =  $conn.CreateCommand()
-    
-    $cmd.CommandText = $sql
-
-    $cmd.ExecuteNonQuery() > $null
-
-    $cmd.Dispose()
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
     echo "User $user removed"
 }
