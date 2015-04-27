@@ -1,4 +1,3 @@
-
 <#
 .SYNOPSIS
 Install i2b2 on a windows server
@@ -82,10 +81,19 @@ Param(
 	[bool]$InstallShrine=$false
 )
 
+<#
+    .AUTHOR
+    Ian Lackey
+    Pediatrics Development Team
+    Washington University in St. Louis
+
+    .DATE
+    April 14, 2015
+#>
 $__timer = [Diagnostics.Stopwatch]::StartNew()
 
 . .\functions.ps1
-. .\configuration.ps1
+. .\config-system.ps1
 . .\config-i2b2.ps1
 
  if((Test-Path $__rootFolder) -ne  $true){
@@ -112,6 +120,7 @@ if($InstallCells -eq $true){
 }
 
 if($InstallShrine -eq $true){
+    . .\config-shrine.ps1
     . .\install-shrine.ps1
 }
 

@@ -18,12 +18,15 @@ another directory and copy the contents into the shrine\tomcat directory beneath
 default directory. It will also install Tomcat 8.0 as a service running automatically.
 #>
 
+
+#NOTE: These should be included in the root install.ps1 file now..
+
 #Include functions.ps1 for unzip functionality
 #Include configurations.ps1 for file download url
-. .\functions.ps1
-. .\configuration.ps1
-. .\common.ps1
-. .\config-i2b2.ps1
+#. .\functions.ps1
+#. .\config-system.ps1
+#. .\config-i2b2.ps1
+#. .\config-shrine.ps1
 
 
 function prepareInstall(){
@@ -80,6 +83,7 @@ function prepareInstall(){
 }
 
 
+#TODO move to install-prereqs
 function installTomcatService{
 
     #This will set the service to Automatic startup, rename it to Apache Tomcat 8.0 and start it.
@@ -96,7 +100,7 @@ function installTomcatService{
     echo "Tomcat8 service set to Automatic and running!"
 }
 
-
+#TODO move to unstall
 function uninstallTomcatService{
 
     #This will stop and uninstall the Apache Tomcat 8.0 service
@@ -107,6 +111,7 @@ function uninstallTomcatService{
 }
 
 
+#TODO move to install-prereqs
 function installTomcat{
 
     echo "downloading tomcat archive..."
@@ -252,44 +257,6 @@ function createCert{
 }
 
 
-function createDatabase($dbname){
-    echo "Creating database: $dbname"
-
-    $sql = interpolate_file $__skelDirectory\i2b2\data\$DEFAULT_DB_TYPE\create_database.sql DB_NAME $dbname
-
-    $cmd =  $conn.CreateCommand()
-    
-    $cmd.CommandText = $sql
-
-    $cmd.ExecuteNonQuery() > $null
-
-    $cmd.Dispose()
-
-    echo "$dbname created"
-
-}
-
-
-function createUser($dbname, $user, $pass, $schema){
-    echo "Creating user: $user"
-
-    $sql = interpolate_file $__skelDirectory\i2b2\data\$DEFAULT_DB_TYPE\create_user.sql DB_NAME $dbname |
-        interpolate DB_USER $user |
-        interpolate DB_PASS $pass |
-        interpolate DB_SCHEMA $schema    
-
-    $cmd =  $conn.CreateCommand()
-    
-    $cmd.CommandText = $sql
-
-    $cmd.ExecuteNonQuery() > $null
-
-    $cmd.Dispose()
-
-    echo "$user created"
-}
-
-
 function createShrineDB{
 
     echo "Creating Shrine Database..."
@@ -350,10 +317,13 @@ function updateDB{
         interpolate I2B2_DB_CRC_DATABASE.I2B2_DB_SCHEMA $CRC_DB_SCHEMA |
         interpolate I2B2_DB_CRC_DATASOURCE_NAME $CRC_DB_DATASOURCE
 
-    $cmd = $conn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $HIVE_DB_NAME $HIVE_DB_USER $HIVE_DB_PASS $sql
+    #ITL Refactored to use new global function
+    #$cmd = $conn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
 
+    
     echo "complete."
     echo "updating pm cell database..."
 
@@ -363,16 +333,24 @@ function updateDB{
         interpolate SHRINE $SHRINE_DB_PROJECT |
         interpolate SHRINE_IP $_SHRINE_IP |
         interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT
+
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $PM_DB_NAME $PM_DB_USER $PM_DB_PASS $sql
+    #ITL Refactored to use new global function
+    #$cmd = $conn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
     
-    $cmd = $conn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+  
     
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\adapter.sql DB_NAME $SHRINE_DB_NAME 
-    
-    $cmd = $conn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql
+    #ITL Refactored to use new global function
+    #$cmd = $conn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
+
+
     
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\hub.sql DB_NAME $SHRINE_DB_NAME 
     
@@ -405,9 +383,13 @@ function updateDB{
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\ontology_create_tables.sql DB_NAME $ONT_DB_NAME |
         interpolate I2B2_DB_SCHEMA $DEFAULT_DB_SCHEMA
 
-    $cmd = $ontConn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
+    #ITL Refactored to use global function    
+    #$cmd = $ontConn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
+    
+  
 
     echo "complete."
     echo "updating table access..."

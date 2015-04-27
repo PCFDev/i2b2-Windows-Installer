@@ -57,7 +57,7 @@ Param(
 )
 
 . .\functions.ps1
-. .\configuration.ps1
+. .\config-system.ps1
 . .\config-i2b2.ps1
 
 function createBackupFolder{

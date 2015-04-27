@@ -2,7 +2,6 @@
 
 echo "Importing functions"
 
-
 function exec{
     Param(
         [parameter(Mandatory=$true)]
@@ -214,4 +213,91 @@ function formatElapsedTime($ts) {
     }
 
     return $elapsedTime
+}
+
+
+function execSqlCmd([String]$server, [String] $dbType, [string]$database, [String]$user, [String]$pass, [String] $sql){
+ <#
+
+
+ https://technet.microsoft.com/en-us/magazine/hh855069.aspx
+ 
+ http://www.postgresql.org/ftp/odbc/versions/
+
+ #>
+    $provider = ""
+    switch ($dbType.ToLower()) {
+        "sqlserver" {
+            $provider ="SQLOLEDB"
+        }
+        "oracle" {
+            $provider ="msdaora"
+        }
+        "mysql" {
+            $provider ="MySQLProv"
+        }
+        "postgresql" {
+            $provider = "MSDASQL"
+        }
+    }
+    
+    #$conn = New-Object System.Data.SqlClient.SqlConnection
+
+    $conn = New-Object System.Data.OleDb.OleDbConnection
+
+    $conn.ConnectionString = "Provider=$provider;Server=$server;Database=$database;Uid=$user;Pwd=$pass;"
+
+    
+    echo "Verifing connection to database server: $conn.ConnectionString"
+
+    
+    try{    
+        $conn.Open() > $null    
+        echo "Connected to $server"
+    }
+    catch {
+        echo "Could not connect to database server: $server"
+        exit -1
+    }
+   
+    
+    $cmd =  $conn.CreateCommand()
+    
+    $cmd.CommandText = $sql
+
+    $cmd.CommandTimeout = 0
+
+    $cmd.ExecuteNonQuery() > $null
+
+    $cmd.Dispose()
+
+    $conn.Close()
+    
+    $conn.Dispose()
+
+}
+
+
+function createDatabase($dbname){
+    echo "Creating database: $dbname"
+
+    $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\create_database.sql DB_NAME $dbname
+
+	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $user $pass $sql
+
+    echo "$dbname created"
+}
+
+
+function createUser($dbname, $user, $pass, $schema){
+    echo "Creating user: $user"
+
+    $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\create_user.sql DB_NAME $dbname |
+        interpolate DB_USER $user |
+        interpolate DB_PASS $pass |
+        interpolate DB_SCHEMA $schema    
+	
+	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $dbname $user $pass $sql
+
+    echo "$user created"
 }

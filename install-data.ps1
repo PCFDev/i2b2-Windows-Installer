@@ -7,9 +7,6 @@
 
     $buildFile = (Get-Item -Path ".\" -Verbose).FullName + "\data_build.xml"
 
-    #HACK to get ant to run   
-    #cp data_build.xml build.xml
-
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $CRC_DB_USER |
         interpolate DB_PASS $CRC_DB_PASS |
@@ -41,10 +38,6 @@ function installHive{
 
     createDatabase $HIVE_DB_NAME
     createUser $HIVE_DB_NAME $HIVE_DB_USER $HIVE_DB_PASS $DEFAULT_DB_SCHEMA
-
-
-    #HACK to get ant to run   
-    #cp data_build.xml build.xml
 
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $HIVE_DB_USER |
@@ -78,9 +71,6 @@ function installIM{
     createDatabase $IM_DB_NAME
     createUser $IM_DB_NAME $IM_DB_USER $IM_DB_PASS $DEFAULT_DB_SCHEMA
 
-    #HACK to get ant to run   
-    #cp data_build.xml build.xml
-
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $IM_DB_USER |
         interpolate DB_PASS $IM_DB_PASS |
@@ -110,10 +100,6 @@ function installOnt{
     createDatabase $ONT_DB_NAME
     createUser $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $DEFAULT_DB_SCHEMA
 
-    #HACK to get ant to run   
-    #cp data_build.xml build.xml
-
-
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $ONT_DB_USER |
         interpolate DB_PASS $ONT_DB_PASS |
@@ -142,10 +128,6 @@ function installPM{
 
     createDatabase $PM_DB_NAME
     createUser $PM_DB_NAME $PM_DB_USER $PM_DB_PASS $DEFAULT_DB_SCHEMA
-
-    #HACK to get ant to run   
-    #cp data_build.xml build.xml
-
 
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $PM_DB_USER |
@@ -181,9 +163,6 @@ function installWork{
 
     createDatabase $WORK_DB_NAME
     createUser $WORK_DB_NAME $WORK_DB_USER $WORK_DB_PASS $DEFAULT_DB_SCHEMA
-    
-    #HACK to get ant to run   
-    #cp data_build.xml build.xml
 
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $WORK_DB_USER |
@@ -195,7 +174,6 @@ function installWork{
         sc db.properties
 
     echo "Installing Work Tables"
-    #ant create_workdata_tables_release_1-7
 
     ant -f "$buildFile" create_workdata_tables_release_1-7
   
@@ -208,62 +186,17 @@ function installWork{
     echo "Work Data Installed"
 }
 
-function createDatabase($dbname){
-    echo "Creating database: $dbname"
 
-    $sql = interpolate_file $__skelDirectory\i2b2\data\$DEFAULT_DB_TYPE\create_database.sql DB_NAME $dbname
 
-    $cmd =  $conn.CreateCommand()
-    
-    $cmd.CommandText = $sql
-
-    $cmd.ExecuteNonQuery() > $null
-
-    $cmd.Dispose()
-
-    echo "$dbname created"
-
-}
-
-function createUser($dbname, $user, $pass, $schema){
-    echo "Creating user: $user"
-
-    $sql = interpolate_file $__skelDirectory\i2b2\data\$DEFAULT_DB_TYPE\create_user.sql DB_NAME $dbname |
-        interpolate DB_USER $user |
-        interpolate DB_PASS $pass |
-        interpolate DB_SCHEMA $schema    
-
-    $cmd =  $conn.CreateCommand()
-    
-    $cmd.CommandText = $sql
-
-    $cmd.ExecuteNonQuery() > $null
-
-    $cmd.Dispose()
-
-    echo "$user created"
-}
 
 
 require $DEFAULT_DB_ADMIN_USER "Database admin username must be set in the configuration"
 require $DEFAULT_DB_ADMIN_PASS "Database admin password must be set in the configuration"
+require $DEFAULT_DB_TYPE "Database type must be set in the configuration"
+require $DEFAULT_DB_SERVER "Database server must be set in the configuration"
 
 echo "Starting i2b2 Data Installation"
 
-echo "Verifing connection to database server"
-
-$conn = New-Object System.Data.SqlClient.SqlConnection
-$conn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=master;Uid=$DEFAULT_DB_ADMIN_USER;Pwd=$DEFAULT_DB_ADMIN_PASS;"
-   
- 
-try{    
-    $conn.Open() > $null    
-    echo "Connected to $DEFAULT_DB_SERVER"
-}
-catch {
-    echo "Could not connect to database server: $DEFAULT_DB_SERVER"
-    exit -1
-}
 
 echo "Extracting data creation scripts..."
 unzip $__dataInstallationZipFile $__sourceCodeRootFolder $true
@@ -283,8 +216,6 @@ installOnt
 installPM
 installWork
 
-$conn.Close()
-$conn.Dispose()
 
 cd $__currentDirectory
 
