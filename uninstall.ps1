@@ -59,6 +59,7 @@ Param(
 . .\functions.ps1
 . .\config-system.ps1
 . .\config-i2b2.ps1
+. .\config-shrine.ps1
 
 function createBackupFolder{
     if((Test-Path $__rootFolder) -ne  $true){
@@ -234,12 +235,17 @@ function removeUser($dbname, $user, $pass, $schema){
     echo "User $user removed"
 }
 
-function uninstallTomcatService{
+function uninstallShrine{
 
     #This will stop and uninstall the Apache Tomcat 8.0 service
 
     echo "uninstalling Tomcat8 service..."
+    
     & "$Env:CATALINA_HOME\bin\service.bat" uninstall Tomcat8
+
+    echo "removing Shrine and Tomcat files and directories..."
+
+    Remove-Item "c:\opt\shrine" -Force -Recurse
 
 }
 
