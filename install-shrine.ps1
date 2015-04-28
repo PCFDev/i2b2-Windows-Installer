@@ -63,15 +63,6 @@ function prepareInstall(){
     echo "Shrine setup locations created."
 
 
-
-    #Check for Java
-    if((isJavaInstalled) -eq $false)
-    {
-        throw "Java not installed!"
-        #InstallJava
-    }
-    echo "Java is installed. Moving on..."
-    
     echo "installing Subversion"
     #Download and install Subversion
     $SVNUrl = "http://downloads.sourceforge.net/project/win32svn/1.8.11/apache22/svn-win32-1.8.11.zip?"
