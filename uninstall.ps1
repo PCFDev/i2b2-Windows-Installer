@@ -234,6 +234,14 @@ function removeUser($dbname, $user, $pass, $schema){
     echo "User $user removed"
 }
 
+function uninstallTomcatService{
+
+    #This will stop and uninstall the Apache Tomcat 8.0 service
+
+    echo "uninstalling Tomcat8 service..."
+    & "$Env:CATALINA_HOME\bin\service.bat" uninstall Tomcat8
+
+}
 
 if($RemovePrereqs -eq $true){  
     removeAnt

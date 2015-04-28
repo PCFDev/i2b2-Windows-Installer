@@ -82,68 +82,6 @@ function prepareInstall(){
     echo "Finished preparing."
 }
 
-
-#TODO move to install-prereqs
-function installTomcatService{
-
-    #This will set the service to Automatic startup, rename it to Apache Tomcat 8.0 and start it.
-
-    echo "installing Tomcat8 service..."
-    & "$Env:CATALINA_HOME\bin\service.bat" install
-    
-    & $Env:CATALINA_HOME\bin\tomcat8 //US//Tomcat8 --DisplayName="Apache Tomcat 8.0"
-
-    echo "setting Tomcat8 service to Automatic and starting..."
-    Set-Service Tomcat8 -StartupType Automatic
-    Start-Service Tomcat8   
-
-    echo "Tomcat8 service set to Automatic and running!"
-}
-
-#TODO move to unstall
-function uninstallTomcatService{
-
-    #This will stop and uninstall the Apache Tomcat 8.0 service
-
-    echo "uninstalling Tomcat8 service..."
-    & "$Env:CATALINA_HOME\bin\service.bat" uninstall Tomcat8
-
-}
-
-
-#TODO move to install-prereqs
-function installTomcat{
-
-    echo "downloading tomcat archive..."
-    
-    #Download tomcat archive, unzip to temp directory, copy contents to shrine\tomcat folder
-    #and remove the downloads and temp folders
-    if(Test-Path $Env:TOMCAT\shrine\_downloads\tomcat.zip){
-        Remove-Item $Env:TOMCAT\shrine\_downloads\tomcat.zip
-    }
-    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $Env:TOMCAT\shrine\_downloads\tomcat8.zip
-
-    echo "download complete."
-    echo "unzipping archive..."
-    
-    unzip $Env:TOMCAT\shrine\_downloads\tomcat8.zip $Env:TOMCAT\shrine
-
-    echo "moving to tomcat directory"
-
-    Copy-Item $Env:TOMCAT\shrine\apache-tomcat-8.0.21\* -Destination $Env:TOMCAT\shrine\tomcat -Container -Recurse
-    
-    echo "cleaning up..."
-    
-    Remove-Item $Env:TOMCAT\shrine\_downloads -Recurse
-    Remove-Item $Env:TOMCAT\shrine\apache-tomcat-8.0.21 -Recurse
-
-    #This environment variable is required for Tomcat to run and to install as a service
-    setEnvironmentVariable "CATALINA_HOME" "$Env:TOMCAT\shrine\tomcat"
-
-    echo "Tomcat is installed."
-}
-
-
 function installShrine{
 
     #Creating URLs for downloading source files
