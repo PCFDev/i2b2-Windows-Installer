@@ -245,10 +245,14 @@ function execSqlCmd([String]$server, [String] $dbType, [string]$database, [Strin
 
     $conn = New-Object System.Data.OleDb.OleDbConnection
 
-    $conn.ConnectionString = "Provider=$provider;Server=$server;Database=$database;Uid=$user;Pwd=$pass;"
+	$connString = "Provider=$provider;Server=$server;Database=$database;Uid=$user;Pwd=$pass;"
+	
+	
+	
+    $conn.ConnectionString = $connString
 
     
-    echo "Verifing connection to database server: $conn.ConnectionString"
+    echo "Verifing connection to database server: $connString"
 
     
     try{    
@@ -283,7 +287,7 @@ function createDatabase($dbname){
 
     $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\create_database.sql DB_NAME $dbname
 
-	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $user $pass $sql
+	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
     echo "$dbname created"
 }
@@ -297,7 +301,7 @@ function createUser($dbname, $user, $pass, $schema){
         interpolate DB_PASS $pass |
         interpolate DB_SCHEMA $schema    
 	
-	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $dbname $user $pass $sql
+	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $dbname $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
     echo "$user created"
 }
