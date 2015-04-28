@@ -31,34 +31,17 @@ default directory. It will also install Tomcat 8.0 as a service running automati
 
 function prepareInstall(){
 
-    echo "Preparing for installation..."
-
-    $Env:TOMCAT = $__rootFolder #"C:\opt"
-
-    #Create temp downloads folder
-    echo "creating directories..."
-    if(!(Test-Path $Env:TOMCAT\shrine\_downloads)){
-        echo "creating temporary download location..."
-        mkdir $Env:TOMCAT\shrine\_downloads
-    }
-
-    echo "creating tomcat directory..."
-    if(Test-Path $Env:TOMCAT\shrine\tomcat){
-        Remove-Item $Env:TOMCAT\shrine\tomcat -Recurse
-    }
-    mkdir $Env:TOMCAT\shrine\tomcat
-    echo "tomcat directory created."
-
-        
+    echo "Preparing for installation..."     
     echo "creating temporary Shrine setup locations..."    
+    
     #Create temp setup folder
-    if(!(Test-Path $_SHRINE_HOME\setup)){
-        mkdir $_SHRINE_HOME\setup
+    if(!(Test-Path $__tempFolder\shrine\setup)){
+        mkdir $__tempFolder\shrine\setup
     }
     
     #Create temp folder for completed files
-    if(!(Test-Path $_SHRINE_HOME\setup\ready)){
-        mkdir $_SHRINE_HOME\setup\ready
+    if(!(Test-Path $__tempFolder\shrine\ready)){
+        mkdir $__tempFolder\shrine\ready
     }
     echo "Shrine setup locations created."
 
@@ -66,8 +49,8 @@ function prepareInstall(){
     echo "installing Subversion"
     #Download and install Subversion
     $SVNUrl = "http://downloads.sourceforge.net/project/win32svn/1.8.11/apache22/svn-win32-1.8.11.zip?"
-    Invoke-WebRequest  $SVNUrl -OutFile $_SHRINE_HOME\setup\subversion.zip -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
-    unzip $_SHRINE_HOME\setup\subversion.zip $_SHRINE_HOME\setup\svn
+    Invoke-WebRequest  $SVNUrl -OutFile $__tempFolder\shrine\setup\subversion.zip -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
+    unzip $__tempFolder\shrine\setup\subversion.zip $__tempFolder\shrine\setup\svn
     echo "Subversion is installed. Moving on..."
 
     echo "Finished preparing."
@@ -91,19 +74,19 @@ function installShrine{
     echo "downloading shrine and shrine-proxy war files..."
     
     #Download shrine.war and shrine-proxy.war to tomcat
-    Invoke-WebRequest $ShrineWarURL  -OutFile $_SHRINE_HOME\setup\shrine.war
-    Invoke-WebRequest $ShrineProxyURL  -OutFile $_SHRINE_HOME\setup\shrine-proxy.war
+    Invoke-WebRequest $ShrineWarURL  -OutFile $__tempFolder\shrine\setup\shrine.war
+    Invoke-WebRequest $ShrineProxyURL  -OutFile $__tempFolder\shrine\setup\shrine-proxy.war
     
     echo "shrine and shrine-proxy war files downloaded."
     echo "downloading shrine-webclient to tomcat..."
     
     #run to copy shrine-webclient to webapps folder in tomcat
-    & "$_SHRINE_HOME\setup\svn\svn-win32-1.8.11\bin\svn.exe" checkout $_SHRINE_SVN_URL_BASE/code/shrine-webclient/  $_SHRINE_HOME\setup\shrine-webclient > $null
+    & "$__tempFolder\shrine\setup\svn\svn-win32-1.8.11\bin\svn.exe" checkout $_SHRINE_SVN_URL_BASE/code/shrine-webclient/  $__tempFolder\shrine\setup\shrine-webclient > $null
 
     echo "shrine-webclient downloaded."
     echo "downloading AdapterMappings.xml file to tomcat..."
    
-    Invoke-WebRequest $ShrineAdapterMappingsURL  -OutFile $_SHRINE_HOME\setup\AdapterMappings.xml
+    Invoke-WebRequest $ShrineAdapterMappingsURL  -OutFile $__tempFolder\shrine\setup\AdapterMappings.xml
 
     echo "AdapterMappings.xml downloaded."
     echo "Configuring tomcat server settings..."
@@ -112,25 +95,25 @@ function installShrine{
     interpolate_file $__skelDirectory\shrine\tomcat\tomcat_server_8.xml "SHRINE_PORT" $_SHRINE_PORT |
         interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT | 
         interpolate "KEYSTORE_FILE" "$_SHRINE_HOME\shrine.keystore" |
-        interpolate "KEYSTORE_PASSWORD" "changeit" | Out-File -Encoding utf8 $_SHRINE_HOME\setup\ready\server.xml
+        interpolate "KEYSTORE_PASSWORD" "changeit" | Out-File -Encoding utf8 $__tempFolder\shrine\ready\server.xml
 
     echo "complete."
     echo "Configuring Shrine cell files..."
 
     #Interpolate cell_config_data.js with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\cell_config_data.js "SHRINE_IP" $_SHRINE_IP |
-        interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT > $_SHRINE_HOME\setup\ready\cell_config_data.js
+        interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT > $__tempFolder\shrine\ready\cell_config_data.js
 
     #Interpolate shrine.xml with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\shrine.xml "SHRINE_SQL_USER" $_SHRINE_MSSQL_USER |
         interpolate "SHRINE_SQL_PASSWORD" $_SHRINE_MSSQL_PASSWORD |
         interpolate "SHRINE_SQL_SERVER" $_SHRINE_MSSQL_SERVER |
-        interpolate "SHRINE_SQL_DB" $_SHRINE_MSSQL_DB > $_SHRINE_HOME\setup\ready\shrine.xml
+        interpolate "SHRINE_SQL_DB" $_SHRINE_MSSQL_DB > $__tempFolder\shrine\ready\shrine.xml
 
     #Interpolate i2b2_config_data.js with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\i2b2_config_data.js "I2B2_PM_IP" $_I2B2_PM_IP |
         interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME |
-        interpolate "I2B2_DOMAIN_ID" $I2B2_DOMAIN > $_SHRINE_HOME\setup\ready\i2b2_config_data.js
+        interpolate "I2B2_DOMAIN_ID" $I2B2_DOMAIN > $__tempFolder\shrine\ready\i2b2_config_data.js
 
     #Interpolate shrine.conf with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\shrine.conf "I2B2_PM_IP" $_I2B2_PM_IP | interpolate "I2B2_ONT_IP" $_I2B2_ONT_IP |
@@ -140,32 +123,25 @@ function installShrine{
         interpolate "SHRINE_ADAPTER_I2B2_PROJECT" $_SHRINE_ADAPTER_I2B2_PROJECT |
         interpolate "I2B2_CRC_IP" $_I2B2_CRC_IP | interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME |
         interpolate "KEYSTORE_FILE" (escape $_KEYSTORE_FILE) | interpolate "KEYSTORE_PASSWORD" $_KEYSTORE_PASSWORD |
-        interpolate "KEYSTORE_ALIAS" $_KEYSTORE_ALIAS > $_SHRINE_HOME\setup\ready\shrine.conf
+        interpolate "KEYSTORE_ALIAS" $_KEYSTORE_ALIAS > $__tempFolder\shrine\ready\shrine.conf
 
     echo "complete."
     echo "moving configured files to tomcat installation..."
 
     #Copy relevant files to proper locations
     mkdir $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient
-    Copy-Item $_SHRINE_HOME\setup\shrine-webclient\* -Destination $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient -Container -Recurse
-    Copy-Item $_SHRINE_HOME\setup\ready\server.xml $_SHRINE_TOMCAT_SERVER_CONF
-    Copy-Item $_SHRINE_HOME\setup\ready\shrine.xml $_SHRINE_TOMCAT_APP_CONF
-    Copy-Item $_SHRINE_HOME\setup\ready\shrine.conf $_SHRINE_CONF_FILE
-    Copy-Item $_SHRINE_HOME\setup\ready\cell_config_data.js $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient\js-i2b2\cells\SHRINE\cell_config_data.js
-    Copy-Item $_SHRINE_HOME\setup\ready\i2b2_config_data.js $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient\i2b2_config_data.js
-    Copy-Item $_SHRINE_HOME\setup\shrine.war $_SHRINE_TOMCAT_HOME\webapps\shrine.war
-    Copy-Item $_SHRINE_HOME\setup\shrine-proxy.war $_SHRINE_TOMCAT_HOME\webapps\shrine-proxy.war
-    Copy-Item $_SHRINE_HOME\setup\AdapterMappings.xml $_SHRINE_TOMCAT_LIB
+    Copy-Item $__tempFolder\shrine\setup\shrine-webclient\* -Destination $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient -Container -Recurse
+    Copy-Item $__tempFolder\shrine\ready\server.xml $_SHRINE_TOMCAT_SERVER_CONF
+    Copy-Item $__tempFolder\shrine\ready\shrine.xml $_SHRINE_TOMCAT_APP_CONF
+    Copy-Item $__tempFolder\shrine\ready\shrine.conf $_SHRINE_CONF_FILE
+    Copy-Item $__tempFolder\shrine\ready\cell_config_data.js $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient\js-i2b2\cells\SHRINE\cell_config_data.js
+    Copy-Item $__tempFolder\shrine\ready\i2b2_config_data.js $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient\i2b2_config_data.js
+    Copy-Item $__tempFolder\shrine\setup\shrine.war $_SHRINE_TOMCAT_HOME\webapps\shrine.war
+    Copy-Item $__tempFolder\shrine\setup\shrine-proxy.war $_SHRINE_TOMCAT_HOME\webapps\shrine-proxy.war
+    Copy-Item $__tempFolder\shrine\setup\AdapterMappings.xml $_SHRINE_TOMCAT_LIB
     Copy-Item $__skelDirectory\shrine\sqlserver\sqljdbc4.jar $_SHRINE_TOMCAT_LIB\sqljdbc4.jar
 
     echo "move complete."
-    echo "Cleaning Up..."
-
-
-    #Remove Shrine Setup Directory
-    Remove-Item $_SHRINE_HOME\setup -Recurse -Force
-
-    echo "all clean!"
     echo "restarting Tomcat Service (if installed)..."
 
     Restart-Service Tomcat8

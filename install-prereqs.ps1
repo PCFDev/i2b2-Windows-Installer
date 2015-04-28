@@ -198,31 +198,41 @@ function installPHP{
 #$service is true by default
 function installTomcat($service=$true){
 
+
+    #Create temp downloads folder
+    echo "creating directories..."
+    if(!(Test-Path $__tempFolder\shrine )){
+        echo "creating temporary download location..."
+        mkdir $__tempFolder\shrine
+    }
+
+    echo "creating tomcat directory..."
+    if(Test-Path $_SHRINE_HOME\tomcat ){
+        Remove-Item $_SHRINE_HOME\tomcat -Recurse
+    }
+    mkdir $_SHRINE_HOME\tomcat
+    echo "tomcat directory created."
+
     echo "downloading tomcat archive..."
     
     #Download tomcat archive, unzip to temp directory, copy contents to shrine\tomcat folder
     #and remove the downloads and temp folders
-    if(Test-Path $Env:TOMCAT\shrine\_downloads\tomcat.zip){
-        Remove-Item $Env:TOMCAT\shrine\_downloads\tomcat.zip
+    if(Test-Path $__tempFolder\shrine\tomcat8.zip){
+        Remove-Item $__tempFolder\shrine\tomcat8.zip
     }
-    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $Env:TOMCAT\shrine\_downloads\tomcat8.zip
+    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\tomcat8.zip
 
     echo "download complete."
     echo "unzipping archive..."
     
-    unzip $Env:TOMCAT\shrine\_downloads\tomcat8.zip $Env:TOMCAT\shrine
+    unzip $__tempFolder\shrine\tomcat8.zip $__tempFolder\shrine
 
     echo "moving to tomcat directory"
 
-    Copy-Item $Env:TOMCAT\shrine\apache-tomcat-8.0.21\* -Destination $Env:TOMCAT\shrine\tomcat -Container -Recurse
-    
-    echo "cleaning up..."
-    
-    Remove-Item $Env:TOMCAT\shrine\_downloads -Recurse
-    Remove-Item $Env:TOMCAT\shrine\apache-tomcat-8.0.21 -Recurse
+    Copy-Item $__tempFolder\shrine\apache-tomcat-8.0.21\* -Destination $_SHRINE_HOME\tomcat -Container -Recurse
 
     #This environment variable is required for Tomcat to run and to install as a service
-    setEnvironmentVariable "CATALINA_HOME" "$Env:TOMCAT\shrine\tomcat"
+    setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
 
     if($service){
     #This will set the service to Automatic startup, rename it to Apache Tomcat 8.0 and start it.
