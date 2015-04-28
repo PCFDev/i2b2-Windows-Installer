@@ -10,7 +10,7 @@ function exec{
 	    [string]$args = ""
     )
 
-    write-host "Running " $path $args
+    echo "Running " $path $args
 
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = $path
@@ -28,13 +28,13 @@ function exec{
 
     
     if($p.ExitCode -ne 0) {
-        Write-Host "stdout: $stdout"
-        Write-Host "stderr: $stderr"
-        Write-Host "exit code: " + $p.ExitCode
+        echo "stdout: $stdout"
+        echo "stderr: $stderr"
+        echo "exit code: " + $p.ExitCode
     	Throw "ERROR"
     }
 
-      write-host $path " completed"
+     echo $path " completed"
 
 
 }
@@ -114,10 +114,6 @@ function isJavaInstalled {
     try{
 
         $java = Get-WmiObject -Class win32_product | where { $_.Name -like "*Java*"}
-
-        #$out = &"java.exe" -version 2>&1
-        #$javaVer = $out[0].tostring();
-        #return ($javaVer -gt "")
 
         return ($java.Count -gt 0)
 
@@ -241,19 +237,13 @@ function execSqlCmd([String]$server, [String] $dbType, [string]$database, [Strin
         }
     }
     
-    #$conn = New-Object System.Data.SqlClient.SqlConnection
-
-    $conn = New-Object System.Data.OleDb.OleDbConnection
+	$conn = New-Object System.Data.OleDb.OleDbConnection
 
 	$connString = "Provider=$provider;Server=$server;Database=$database;Uid=$user;Pwd=$pass;"
-	
-	
-	
+		
     $conn.ConnectionString = $connString
-
     
     echo "Verifing connection to database server: $connString"
-
     
     try{    
         $conn.Open() > $null    
