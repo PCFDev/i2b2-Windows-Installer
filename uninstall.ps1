@@ -247,6 +247,8 @@ function uninstallShrine{
 
     Remove-Item "c:\opt\shrine" -Force -Recurse
 
+    echo "Shrine and Tomcat have been removed."
+
 }
 
 if($RemovePrereqs -eq $true){  
