@@ -26,9 +26,9 @@ $DEFAULT_DB_SERVER="localhost\sqlexpress"
 
 #THESE ARE USED TO CREATE DATABASES, NEEDS TO HAVE ADMIN ACCESS TO DB SERVER
 $DEFAULT_DB_ADMIN_USER="admin" #<== THIS IS NOT SET
-$DEFAULT_DB_ADMIN_PASS=$null #<== THIS IS NOT SET
+$DEFAULT_DB_ADMIN_PASS="password" #<== THIS IS NOT SET
 
-$DEFAULT_DB_URL="jdbc:sqlserver://" + $DEFAULT_DB_SERVER + ":1433"
+$DEFAULT_DB_URL="jdbc:sqlserver://" + $DEFAULT_DB_SERVER  #If NOT using SQLEXPRESS need to include the port number: + ":1433"
 $DEFAULT_DB_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver"
 $DEFAULT_DB_JAR_FILE="sqljdbc4.jar"
 $DEFAULT_DB_TYPE="SQLServer"

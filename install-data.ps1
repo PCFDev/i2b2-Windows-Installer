@@ -10,9 +10,9 @@
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $CRC_DB_USER |
         interpolate DB_PASS $CRC_DB_PASS |
-        interpolate DB_SERVER $DEFAULT_DB_SERVER |
+        interpolate DB_SERVER (escape $DEFAULT_DB_SERVER) |
         interpolate DB_DRIVER $CRC_DB_DRIVER |
-        interpolate DB_URL $CRC_DB_URL |
+        interpolate DB_URL (escape $CRC_DB_URL) |
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
     
@@ -42,9 +42,9 @@ function installHive{
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $HIVE_DB_USER |
         interpolate DB_PASS $HIVE_DB_PASS |
-        interpolate DB_SERVER $DEFAULT_DB_SERVER |
+        interpolate DB_SERVER (escape $DEFAULT_DB_SERVER) |
         interpolate DB_DRIVER $HIVE_DB_DRIVER |
-        interpolate DB_URL $HIVE_DB_URL |
+        interpolate DB_URL (escape $HIVE_DB_URL) |
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
@@ -74,9 +74,9 @@ function installIM{
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $IM_DB_USER |
         interpolate DB_PASS $IM_DB_PASS |
-        interpolate DB_SERVER $DEFAULT_DB_SERVER |
+        interpolate DB_SERVER (escape $DEFAULT_DB_SERVER) |
         interpolate DB_DRIVER $IM_DB_DRIVER |
-        interpolate DB_URL $IM_DB_URL |
+        interpolate DB_URL (escape $IM_DB_URL) |
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
@@ -103,9 +103,9 @@ function installOnt{
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $ONT_DB_USER |
         interpolate DB_PASS $ONT_DB_PASS |
-        interpolate DB_SERVER $DEFAULT_DB_SERVER |
+        interpolate DB_SERVER (escape $DEFAULT_DB_SERVER) |
         interpolate DB_DRIVER $ONT_DB_DRIVER |
-        interpolate DB_URL $ONT_DB_URL |
+        interpolate DB_URL (escape $ONT_DB_URL) |
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
@@ -132,9 +132,9 @@ function installPM{
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $PM_DB_USER |
         interpolate DB_PASS $PM_DB_PASS |
-        interpolate DB_SERVER $DEFAULT_DB_SERVER |
+        interpolate DB_SERVER (escape $DEFAULT_DB_SERVER) |
         interpolate DB_DRIVER $PM_DB_DRIVER |
-        interpolate DB_URL $PM_DB_URL |
+        interpolate DB_URL (escape $PM_DB_URL) |
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
@@ -167,9 +167,9 @@ function installWork{
     interpolate_file $__skelDirectory\i2b2\data\db.properties DB_TYPE $DEFAULT_DB_TYPE |
         interpolate DB_USER $WORK_DB_USER |
         interpolate DB_PASS $WORK_DB_PASS |
-        interpolate DB_SERVER $DEFAULT_DB_SERVER |
+        interpolate DB_SERVER (escape $DEFAULT_DB_SERVER) |
         interpolate DB_DRIVER $WORK_DB_DRIVER |
-        interpolate DB_URL $WORK_DB_URL |
+        interpolate DB_URL (escape $WORK_DB_URL) |
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
