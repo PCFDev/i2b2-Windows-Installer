@@ -96,6 +96,10 @@ $__timer = [Diagnostics.Stopwatch]::StartNew()
 . .\config-system.ps1
 . .\config-i2b2.ps1
 
+if($InstallShrine -eq $true){
+    . .\config-shrine.ps1
+}
+
  if((Test-Path $__rootFolder) -ne  $true){
 
     New-Item $__rootFolder -Type directory -Force > $null
@@ -107,9 +111,9 @@ $__timer = [Diagnostics.Stopwatch]::StartNew()
 #Create a directory to work out of
 createTempFolder
 
-if($InstallPrereqs -eq $true){
-    . .\install-prereqs.ps1
-}
+#if($InstallPrereqs -eq $true){
+. .\install-prereqs.ps1
+#}
 
 if($InstallDatabases -eq $true){    
     . .\install-data.ps1
@@ -120,7 +124,6 @@ if($InstallCells -eq $true){
 }
 
 if($InstallShrine -eq $true){
-    . .\config-shrine.ps1
     . .\install-shrine.ps1
 }
 

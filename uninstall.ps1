@@ -20,6 +20,10 @@ Deletes the i2b2 web client from the IIS default web site
 .PARAMETER RemoveWebClient
 Deletes the i2b2 admin tool from the IIS default web site
 
+.PARAMETER RemoveShrine
+Removes the Tomcat installation along with the shrine installation. Will also remove shrine database entries if RemoveDatabases is also true
+
+
 .EXAMPLE
 .\uninstall
 Removes the installation of the i2b2 Server Requirements, i2b2 cells, the web client and the admin tool. By default the script leaves the database(s) intact
@@ -46,14 +50,19 @@ Param(
     [parameter(Mandatory=$false)]
 	[alias("c")]
 	[bool]$RemoveCells=$true,
-
+	
     [parameter(Mandatory=$false)]
 	[alias("w")]
 	[bool]$RemoveWebClient=$true,
 
     [parameter(Mandatory=$false)]
 	[alias("a")]
-	[bool]$RemoveAdminTool=$true
+	[bool]$RemoveAdminTool=$true,
+	
+	[parameter(Mandatory=$false)]
+	[alias("s")]
+	[bool]$RemoveShrine=$true
+	
 )
 
 . .\functions.ps1
@@ -235,7 +244,7 @@ function removeUser($dbname, $user, $pass, $schema){
     echo "User $user removed"
 }
 
-function uninstallShrine{
+function removeShrine {
 
     #This will stop and uninstall the Apache Tomcat 8.0 service
 
@@ -251,6 +260,10 @@ function uninstallShrine{
 
 }
 
+function removeShrineDatabases {
+
+}
+
 if($RemovePrereqs -eq $true){  
     removeAnt
     removeJBOSS
@@ -261,14 +274,21 @@ if($RemovePrereqs -eq $true){
 
 if($RemoveDatabases -eq $true){
     removeDatabases
+	
+	if($RemoveShrine -eq $true){
+		removeShrineDatabases
+	}
 }
 
-if($RemoveWebClient -eq $true){    
+if($RemoveWebClient -eq $true -And (Test-Path $__webclientInstallFolder\webclient)){    
     rm -r $__webclientInstallFolder\webclient -Force
 }
 
-if($RemoveAdminTool -eq $true){
+if($RemoveAdminTool -eq $true -And (Test-Path  $__webclientInstallFolder\admin)){
    rm -r $__webclientInstallFolder\admin -Force
 }
 
+if($RemoveShrine -eq $true){
+	removeShrine
+}
 echo "done."

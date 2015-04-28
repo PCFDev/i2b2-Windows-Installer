@@ -255,3 +255,7 @@ if(($InstallWebClient -eq $true) -or ($InstallAdminTool -eq $true)){
     installIIS
     installPHP
 }
+
+if($InstallShrine -eq $true){
+    installTomcat
+}

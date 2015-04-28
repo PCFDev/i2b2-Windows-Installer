@@ -33,7 +33,7 @@ function prepareInstall(){
 
     echo "Preparing for installation..."
 
-    $Env:TOMCAT = "C:\opt"
+    $Env:TOMCAT = $__rootFolder #"C:\opt"
 
     #Create temp downloads folder
     echo "creating directories..."
@@ -372,8 +372,8 @@ prepareInstall
 
 echo "Beginning Shrine client install..."
 
-installTomcat
-installTomcatService
+#installTomcat
+#installTomcatService
 createCert
 installShrine
 
