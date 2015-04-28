@@ -291,17 +291,18 @@ function updateDB{
 
     
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\hub.sql DB_NAME $SHRINE_DB_NAME 
-    
-    $cmd = $conn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql    
+    #$cmd = $conn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
 
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql DB_NAME $SHRINE_DB_NAME 
-    
-    $cmd = $conn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
-    $cmd.Dispose()
+   
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql    
+    #$cmd = $conn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
 
     echo "complete"
     echo "updating ontology records..." 
@@ -336,9 +337,10 @@ function updateDB{
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\ontology_table_access.sql DB_NAME $ONT_DB_NAME |
         interpolate I2B2_DB_SCHEMA $DEFAULT_DB_SCHEMA
 
-    $cmd = $ontConn.CreateCommand()
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
+    #$cmd = $ontConn.CreateCommand()
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
 
     echo "complete."
     echo "downloading and running Shrine Ontology..."
@@ -349,17 +351,16 @@ function updateDB{
     $sql = Get-Content "$__skelDirectory\shrine\sqlserver\shrine.sql"
 
     #Must set CommandTimeout due to size of shrine.sql
-    $cmd = $ontConn.CreateCommand()
-    $cmd.CommandTimeout = 0
-    $cmd.CommandText = $sql
-    $cmd.ExecuteNonQuery() > $null
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
+    #$cmd = $ontConn.CreateCommand()
+    #$cmd.CommandTimeout = 0
+    #$cmd.CommandText = $sql
+    #$cmd.ExecuteNonQuery() > $null
 
     echo "Shrine Ontology added."
     echo "ontology records updated."
     echo "cleaning up ontology files..."
 
-    #cleaning up
-    $cmd.Dispose()
     Remove-Item $__skelDirectory\shrine\sqlserver\shrine.sql
 
     echo "complete."

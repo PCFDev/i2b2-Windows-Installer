@@ -195,8 +195,8 @@ function installPHP{
 }
 
 #Takes the boolean value $service for option to install tomcat service
-#$service is false by default
-function installTomcat($service){
+#$service is true by default
+function installTomcat($service=$true){
 
     echo "downloading tomcat archive..."
     
