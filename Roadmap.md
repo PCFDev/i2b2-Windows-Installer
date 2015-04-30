@@ -1,0 +1,1 @@
+1. Remove the i2b2 zip files from the repo and download them during the install

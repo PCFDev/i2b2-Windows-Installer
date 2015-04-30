@@ -1,0 +1,54 @@
+<nav class="navbar navbar-inverse" role="navigation">
+  <div class="under2">
+    <img alt="" class="img-responsive hidden-xs hidden-sm" src="{{ ASSET_PATH }}/images/Brookings2.png" style="" usemap="#BrookingsMap" />
+  </div>
+  <div class="over">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="DeptTitleMobile hidden-md hidden-lg" href="http://pediatrics.wustl.edu" target="_blank">Department of Pediatrics</a>
+        <a class="DeptTitleNavBar hidden-xs hidden-sm" href="http://pediatrics.wustl.edu" target="_blank">Department of Pediatrics</a>
+        <br />
+        <a class="" href="http://medicine.wustl.edu/" target="_blank">
+          <img alt="" class="img-responsive hidden-xs" src="{{ ASSET_PATH }}/images/WUSLTMedLogo3.png" />
+        </a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/">Home</a></li>
+          {% for p in site.pages %}
+          {% if p.title and p.group == "menu" %}
+            {% if p.title == page.title %}
+              <li><a href="{{ p.url | prepend: site.baseurl }}" class="active">{{ p.title }}</a></li>
+            {% else %}
+              <li><a href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a></li>
+              {% endif %}
+          {% endif %}
+          {% endfor %}
+          <li class="hidden">
+            <table border="0" cellpadding="0" cellspacing="0" class="SearchTable hidden-xs hidden-sm">
+              <tr>
+                <td style="" valign="top">
+                  <input type="text" class="pedssearch"></input>
+                </td>
+                <td valign="top">
+                  <img ID="TextSearchButton" src="{{ ASSET_PATH }}/images/PedsMagGlass.png" />
+                </td>
+              </tr>
+            </table>
+          </li>
+          <li><a href="http://www.wustl.edu/" target="_blank">wustl</a></li>
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </div>
+</nav>

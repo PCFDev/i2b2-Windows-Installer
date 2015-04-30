@@ -1,0 +1,10 @@
+---
+#merge sass files
+---
+
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+        "peds2015/skin",
+        "peds2015/layout",
+        "peds2015/menu"
+;

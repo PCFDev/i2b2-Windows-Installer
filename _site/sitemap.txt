@@ -1,0 +1,7 @@
+
+http://innovation.wus.tl/PROJECT_GITHUB_URL/404.html
+http://innovation.wus.tl/PROJECT_GITHUB_URL/atom.xml
+http://innovation.wus.tl/PROJECT_GITHUB_URL/index.html
+http://innovation.wus.tl/PROJECT_GITHUB_URL/rss.xml
+http://innovation.wus.tl/PROJECT_GITHUB_URL/sitemap.txt
+http://innovation.wus.tl/PROJECT_GITHUB_URL/assets/themes/peds2015/css/theme.css

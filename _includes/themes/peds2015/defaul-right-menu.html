@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link href="{{ ASSET_PATH }}/css/theme.css" rel="stylesheet" />
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  <title> {{ page.title }} </title>
+</head>
+<body>
+  <div class="body">
+    {% include themes/peds2015/navigation.html %}
+    <div style="clear:both;"></div>
+    <div class="MiddleBackground container">
+      <div class="row">
+        <div class="col-md-10 col-sm-12">
+          <section>
+            <div class="MainContentBody1Col">
+              <div>{{content}}</div>
+            </div>
+          </section>
+        </div>
+        <div class="col-md-2 col-sm-12">
+          <section class="right-menu">
+            <h3>Recent posts</h3>
+            <ul class="list-unstyled">
+              {% for post in site.posts offset: 0 limit: 10 %}
+              <li>&raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+              {% endfor %}
+              <li>&raquo; <a href="{{BASE_PATH}}/archive.html">view archive</a></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="clear:both;"></div>
+  {% include themes/peds2015/footer.html %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</body>
+</html>
