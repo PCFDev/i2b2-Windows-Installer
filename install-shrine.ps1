@@ -145,7 +145,7 @@ function createCert{
     echo "Generating Shrine keystore and SSL certificate..."
 
     & "$Env:JAVA_HOME\bin\keytool.exe" -genkeypair -keysize 2048 -alias $_KEYSTORE_ALIAS -dname "CN=$_KEYSTORE_ALIAS, OU=$_KEYSTORE_HUMAN, O=SHRINE Network, L=$_KEYSTORE_CITY, S=$_KEYSTORE_STATE, C=$_KEYSTORE_COUNTRY" -keyalg RSA -keypass $_KEYSTORE_PASSWORD -storepass $_KEYSTORE_PASSWORD -keystore $_KEYSTORE_FILE -validity 7300
-    & "$Env:JAVA_HOME\bin\keytool.exe" -noprompt -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer" > $null
+    & "$Env:JAVA_HOME\bin\keytool.exe" -noprompt -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer"
 
     echo "complete."
 }
@@ -179,7 +179,7 @@ function updateDatasources{
     echo "configuring new ontology datasource file..."
 
     #configuring template to replace current ont-ds.xml
-    interpolate_file $__skelDirectory\shrine\sqlserver\ont-ds.xml I2B2_DB_HIVE_DATASOURCE_NAME "OntologyBootstrapDS" |
+    interpolate_file $__skelDirectory\shrine\sqlserver\ont-ds.xml I2B2_DB_HIVE_DATASOURCE_NAME "OntologyBootStrapDS" |
         interpolate I2B2_DB_HIVE_JDBC_URL $HIVE_DB_URL |
         interpolate I2B2_DB_HIVE_USER $HIVE_DB_USER |
         interpolate I2B2_DB_HIVE_PASSWORD $HIVE_DB_PASS |
