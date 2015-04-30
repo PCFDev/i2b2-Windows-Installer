@@ -5,9 +5,6 @@ Install i2b2 on a windows server
 .DESCRIPTION
 This scripts is used to install i2b2 or portions of an i2b2 system such as the web client, databases, demo data etc.
 
-.PARAMETER InstallPrereqs
-Install the required software Java, Ant and JBoss (including JBoss as a service) as discussed in the i2b2 Server Requirements section of the installation guide.
-
 .PARAMETER InstallDatabases
 Run the ant scripts from the Data Installation Section of the Installation Guide
 
@@ -39,22 +36,12 @@ Runs the installation of the i2b2 Server Requirements and skips the Data Install
 Runs the installation of the i2b2 Server Requirements and the Data Installation process but does not load the demo data
 
 .EXAMPLE
-.\install -p $false
-Skips the installation of the i2b2 Server Requirements and runs the rest of the installation process assuming the pre-reqs are already installed
-
-.EXAMPLE
-.\install -p $false -d $false
-Skips the installation of the i2b2 Server Requirements and the Data Installation process and runs the rest of the installation process assuming the pre-reqs are already installed
-
 .\install -s $true
 Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process, loads the demo data and installs shrine
 
 #>
 [CmdletBinding()]
 Param(
-    [parameter(Mandatory=$false)]
-	[alias("p")]
-	[bool]$InstallPrereqs=$true,
 
     [parameter(Mandatory=$false)]
 	[alias("d")]
@@ -111,9 +98,7 @@ if($InstallShrine -eq $true){
 #Create a directory to work out of
 createTempFolder
 
-#if($InstallPrereqs -eq $true){
 . .\install-prereqs.ps1
-#}
 
 if($InstallDatabases -eq $true){    
     . .\install-data.ps1
