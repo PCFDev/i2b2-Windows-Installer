@@ -18,17 +18,6 @@ another directory and copy the contents into the shrine\tomcat directory beneath
 default directory. It will also install Tomcat 8.0 as a service running automatically.
 #>
 
-
-#NOTE: These should be included in the root install.ps1 file now..
-
-#Include functions.ps1 for unzip functionality
-#Include configurations.ps1 for file download url
-#. .\functions.ps1
-#. .\config-system.ps1
-#. .\config-i2b2.ps1
-#. .\config-shrine.ps1
-
-
 function prepareInstall(){
 
     echo "Preparing for installation..."     
@@ -156,7 +145,7 @@ function createCert{
     echo "Generating Shrine keystore and SSL certificate..."
 
     & "$Env:JAVA_HOME\bin\keytool.exe" -genkeypair -keysize 2048 -alias $_KEYSTORE_ALIAS -dname "CN=$_KEYSTORE_ALIAS, OU=$_KEYSTORE_HUMAN, O=SHRINE Network, L=$_KEYSTORE_CITY, S=$_KEYSTORE_STATE, C=$_KEYSTORE_COUNTRY" -keyalg RSA -keypass $_KEYSTORE_PASSWORD -storepass $_KEYSTORE_PASSWORD -keystore $_KEYSTORE_FILE -validity 7300
-    & "$Env:JAVA_HOME\bin\keytool.exe" -noprompt -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer"
+    & "$Env:JAVA_HOME\bin\keytool.exe" -noprompt -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer" > $null
 
     echo "complete."
 }
@@ -171,7 +160,7 @@ function createShrineDB{
     echo "Shrine Database created."
     echo "Creating Shrine DB user..."
 
-    createUser $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $SHRINE_DB_SCHEMA
+    createUser $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $DEFAULT_DB_SCHEMA
 
     echo "Shrine DB User created."
 }
@@ -223,15 +212,9 @@ function updateDB{
         interpolate I2B2_DB_CRC_DATASOURCE_NAME $CRC_DB_DATASOURCE
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $HIVE_DB_NAME $HIVE_DB_USER $HIVE_DB_PASS $sql
-    #ITL Refactored to use new global function
-    #$cmd = $conn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
-
-    
     echo "complete."
+	
     echo "updating pm cell database..."
-
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\configure_pm.sql DB_NAME $PM_DB_NAME |
         interpolate SHRINE_USER $SHRINE_DB_USER |
         interpolate SHRINE_PASSWORD_CRYPTED (hash $SHRINE_DB_PASS) |
@@ -240,38 +223,25 @@ function updateDB{
         interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $PM_DB_NAME $PM_DB_USER $PM_DB_PASS $sql
-    #ITL Refactored to use new global function
-    #$cmd = $conn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
+	echo "complete."
     
   
-    
+    echo "Executing Shrine adapter.sql"
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\adapter.sql DB_NAME $SHRINE_DB_NAME 
-
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql
-    #ITL Refactored to use new global function
-    #$cmd = $conn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
-
-
-    
-    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\hub.sql DB_NAME $SHRINE_DB_NAME 
-
-    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql    
-    #$cmd = $conn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
-
-    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql DB_NAME $SHRINE_DB_NAME 
-   
-    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql    
-    #$cmd = $conn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
-
     echo "complete"
+
+
+    echo "Executing Shrine hub.sql"    
+    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\hub.sql DB_NAME $SHRINE_DB_NAME 
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql    
+    echo "complete."
+	
+	echo "Executing Shrine create_broadcaster_audit_table.sql"   
+    $sql = interpolate_file $__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql DB_NAME $SHRINE_DB_NAME    
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql        
+    echo "complete"
+	
     echo "updating ontology records..." 
 
     #Now using ontConn for ontology edits
@@ -290,12 +260,6 @@ function updateDB{
         interpolate I2B2_DB_SCHEMA $DEFAULT_DB_SCHEMA
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
-    #ITL Refactored to use global function    
-    #$cmd = $ontConn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
-    
-  
 
     echo "complete."
     echo "updating table access..."
@@ -305,9 +269,6 @@ function updateDB{
         interpolate I2B2_DB_SCHEMA $DEFAULT_DB_SCHEMA
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
-    #$cmd = $ontConn.CreateCommand()
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
 
     echo "complete."
     echo "downloading and running Shrine Ontology..."
@@ -319,10 +280,7 @@ function updateDB{
 
     #Must set CommandTimeout due to size of shrine.sql
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
-    #$cmd = $ontConn.CreateCommand()
-    #$cmd.CommandTimeout = 0
-    #$cmd.CommandText = $sql
-    #$cmd.ExecuteNonQuery() > $null
+
 
     echo "Shrine Ontology added."
     echo "ontology records updated."
@@ -338,59 +296,12 @@ function updateDB{
 prepareInstall
 
 echo "Beginning Shrine client install..."
-
-#installTomcat
-#installTomcatService
 createCert
 installShrine
-
 echo "Shrine client installation complete!"
+
 echo "Starting Shrine Data Installation..."
-
-echo "creating database connections..."
-echo "Verifying connection to $DEFAULT_DB_SERVER database server - master database"
-    
-#Create DB connection to create shrine_query_history database, create shrine db_owner, and write to PM and Hive DBs
-$conn = New-Object System.Data.SqlClient.SqlConnection
-$conn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=master;Uid=$DEFAULT_DB_ADMIN_USER;Pwd=$DEFAULT_DB_ADMIN_PASS;"
- 
-try{    
-    $conn.Open() > $null    
-    echo "Connected to $DEFAULT_DB_SERVER : master"
-}
-catch {
-    echo "Could not connect to database server: $DEFAULT_DB_SERVER : master"
-    exit -1
-}
-
-
-echo "Verifying connection to $DEFAULT_DB_SERVER database server - $ONT_DB_NAME database"
-#Create DB connection to update ontology tables
-$ontConn = New-Object System.Data.SqlClient.SqlConnection
-$ontConn.ConnectionString = "Server=$DEFAULT_DB_SERVER;Database=$ONT_DB_NAME;Uid=$ONT_DB_USER;Pwd=$ONT_DB_PASS;"
-   
-try{    
-    $ontConn.Open() > $null    
-    echo "Connected to $DEFAULT_DB_SERVER : $ONT_DB_NAME"
-}
-catch {
-    echo "Could not connect to database server: $DEFAULT_DB_SERVER : $ONT_DB_NAME"
-    exit -1
-}
-
-echo "database connections successfully created."
-
 createShrineDB
 updateDB
 updateDatasources
-
-echo "closing database connections..."
-
-$conn.Close()
-$conn.Dispose()
-$ontConn.Close()
-$ontConn.Dispose()
-
-echo "connections closed."
-
 echo "Shrine Data Installation complete!"
