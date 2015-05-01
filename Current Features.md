@@ -1,3 +1,9 @@
+---
+layout: page
+title: Current Features
+tagline: features included in the installer
+group: menu
+---
 1. Install Prereqs
   * Java
   * Ant

@@ -50,7 +50,19 @@
           <li><a href="/">Home</a></li>
           
           
+            
+              <li><a href="/Current%20Features.html">Current Features</a></li>
+              
           
+          
+          
+          
+          
+          
+          
+            
+              <li><a href="/configuration/index.html">Configuration</a></li>
+              
           
           
           
@@ -81,8 +93,9 @@
     <!-- /.container-fluid -->
   </div>
 </nav>
-
+           
             <div class="container">
+                <h1>I2B2 Windows Installer</h1>
                 
 <div class="page-header">
   <h1>Home  <small>project home</small></h1>
@@ -91,25 +104,38 @@
 <div class="row">
   <div class="col-xs-12">
     
-<h2 id="home-page">Home Page</h2>
-<p>Here is a placeholder page for the github project…</p>
+<h1 id="getting-started">Getting Started</h1>
+<p>To use this installer a few things need to be in place before you begin.</p>
 
-<p>To get started the _config.yml file needs to have a few things changed.</p>
+<ol>
+  <li>You must have a windows server with internet connectivity</li>
+  <li>PowerShell 4.0 or higher must be installed on the server</li>
+  <li>You must be able to connect to a MSSQL server with an account that is a member of the sysadmin server role from the windows server</li>
+</ol>
 
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
-<p>1</p>
+<p>Once your server is ready follow these steps:</p>
 
-<h3 id="way-down-here">Way down here…</h3>
+<ol>
+  <li>Click the <strong>Download ZIP</strong> button on the right of this page</li>
+  <li>Extract the zip on the windows server</li>
+  <li>Edit the <strong>config-i2b2.ps1</strong> file and set values for the following variables:
+    <ul>
+      <li><strong>DEFAULT_DB_SERVER</strong></li>
+      <li><strong>DEFAULT_DB_ADMIN_USER</strong></li>
+      <li><strong>DEFAULT_DB_ADMIN_PASS</strong></li>
+    </ul>
+  </li>
+  <li>Open PowerShell as an Administrator</li>
+  <li>Navigate to the folder the zip extracted to and  run: <strong>.\install.ps1</strong> </li>
+</ol>
 
-<p>is something</p>
+<h2 id="care-to-contribute">Care to contribute?</h2>
+<hr />
+
+<p>If you are interested in contributing to the cause please feel free to contact us : appdev ( at ) kids.wustl.edu</p>
+
+<hr />
+
 
   </div>
 </div>
