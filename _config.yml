@@ -11,6 +11,7 @@ highlighter: pygments
 #
 title : I2B2 Windows Installer
 tagline: Writing Code, Saving Babies
+
 author :
   name : PCF Development
   email : appdev@kids.wustl.edu
@@ -56,7 +57,7 @@ JB :
   #   - Only the following values are falsy: ["", null, false]
   #   - When setting BASE_PATH it must be a valid url.
   #     This means always setting the protocol (http|https) or prefixing with "/"
-  BASE_PATH : http://innovation.wus.tl/i2b2-Windows-Installer/
+  BASE_PATH : http://pcfdev.github.io/i2b2-Windows-Installer/
 
   # By default, the asset_path is automatically defined relative to BASE_PATH plus the enabled theme.
   # ex: [BASE_PATH]/assets/themes/[THEME-NAME]

@@ -22,7 +22,7 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="/">Home</a></li>
+          <li><a href="{{BASE_PATH}}">Home</a></li>
           {% for p in site.pages %}
           {% if p.title and p.group == "menu" %}
             {% if p.title == page.title %}
