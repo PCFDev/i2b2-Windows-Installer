@@ -26,9 +26,9 @@
           {% for p in site.pages %}
           {% if p.title and p.group == "menu" %}
             {% if p.title == page.title %}
-              <li><a href="{{ p.url | prepend: site.baseurl }}" class="active">{{ p.title }}</a></li>
+              <li><a href="{{ p.url | prepend: BASE_PATH }}" class="active">{{ p.title }}</a></li>
             {% else %}
-              <li><a href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a></li>
+              <li><a href="{{ p.url | prepend: BASE_PATH }}">{{ p.title }}</a></li>
               {% endif %}
           {% endif %}
           {% endfor %}
