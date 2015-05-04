@@ -261,7 +261,9 @@ function removeShrine {
 }
 
 function removeShrineDatabases {
-
+	removeDatabase $SHRINE_DB_NAME
+	
+	#TODO remove records from i2b2 tables...	
 }
 
 if($RemovePrereqs -eq $true){  
@@ -273,6 +275,8 @@ if($RemovePrereqs -eq $true){
 }
 
 if($RemoveDatabases -eq $true){
+
+	#QUESTION? should we verify that cells are being removed? Doing so would allow shrine databases to be removed without removing i2b2 databases...
     removeDatabases
 	
 	if($RemoveShrine -eq $true){
