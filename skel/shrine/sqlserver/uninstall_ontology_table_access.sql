@@ -1,2 +1,3 @@
+use DB_NAME;
 
 delete from I2B2_DB_SCHEMA.TABLE_ACCESS where C_TABLE_CD = 'SHRINE';
