@@ -18,6 +18,11 @@ another directory and copy the contents into the shrine\tomcat directory beneath
 default directory. It will also install Tomcat 8.0 as a service running automatically.
 #>
 
+. .\functions.ps1
+. .\config-system.ps1
+. .\config-i2b2.ps1
+. .\config-shrine.ps1
+
 function prepareInstall(){
 
     echo "Preparing for installation..."     
@@ -33,7 +38,6 @@ function prepareInstall(){
         mkdir $__tempFolder\shrine\ready
     }
     echo "Shrine setup locations created."
-
 
     echo "installing Subversion"
     #Download and install Subversion

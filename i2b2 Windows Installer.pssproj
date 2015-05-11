@@ -88,6 +88,7 @@
     <Compile Include="skel\shrine\tomcat\shrine.conf" />
     <Compile Include="skel\shrine\tomcat\shrine.xml" />
     <Compile Include="skel\shrine\tomcat\tomcat_server_8.xml" />
+    <Compile Include="uninstall-shrine.ps1" />
     <Compile Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>

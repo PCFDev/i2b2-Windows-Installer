@@ -39,6 +39,14 @@ function exec{
 
 }
 
+function removeFromPath($path) {
+
+    $cleanPath = $env:Path.Replace($path, "")
+    $cleanPath = $cleanPath.TrimEnd(';') 
+    $env:Path = $cleanPath
+    [Environment]::SetEnvironmentVariable("PATH", $cleanPath, "Machine")
+}
+
 function setEnvironmentVariable($name, $value){
     [System.Environment]::SetEnvironmentVariable($name, $value, 'machine')
     [System.Environment]::SetEnvironmentVariable($name, $value, 'process')
@@ -294,4 +302,29 @@ function createUser($dbname, $user, $pass, $schema){
 	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $dbname $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
     echo "$user created"
+}
+
+
+function removeDatabase($dbname){
+    echo "Removing database: $dbname"
+
+    $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\remove_database.sql DB_NAME $dbname
+
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
+
+    echo "Database $dbname removed"
+
+}
+
+function removeUser($dbname, $user, $pass, $schema){
+    echo "Removing user: $user"
+
+    $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\remove_user.sql DB_NAME $dbname |
+        interpolate DB_USER $user |
+        interpolate DB_PASS $pass |
+        interpolate DB_SCHEMA $schema    
+
+    execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
+
+    echo "User $user removed"
 }
