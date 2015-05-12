@@ -232,7 +232,7 @@ if($RemoveAdminTool -eq $true -And (Test-Path  $__webclientInstallFolder\admin))
 if($RemovePrereqs -eq $true){  
     removeAnt
     removeJBOSS
-	if($RemoveShrine -eq $true){
+	if($RemoveShrine -eq $true -or !(Test-Path $__rootFolder\shrine)){
 		removeJava}
     removePHP
     removeIIS
