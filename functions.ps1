@@ -130,6 +130,7 @@ function isJavaInstalled {
     }
 }
 
+
 function removeTempFolder{  
 
     if(Test-Path $__tempFolder){
