@@ -251,8 +251,6 @@ function execSqlCmd([String]$server, [String] $dbType, [string]$database, [Strin
 		
     $conn.ConnectionString = $connString
     
-    echo "Verifing connection to database server: $connString"
-    
     try{    
         $conn.Open() > $null    
         echo "Connected to $server"
