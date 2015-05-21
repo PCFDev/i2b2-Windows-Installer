@@ -32,11 +32,11 @@ function installJava{
     }
     else{
 
-		echo "Setting JAVA_HOME to correct directory..."
+		echo "Setting JAVA_HOME directory..."
 
 		$javaPath = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\javaws.exe" -name "path").Path
 		setEnvironmentVariable JAVA_HOME $javaPath.Parent.Parent.FullName
-		addToPath $env:JAVA_HOME
+		addToPath "$env:JAVA_HOME\bin;"
 
 	}
 	echo "Java Installed"
