@@ -121,7 +121,7 @@ function isJavaInstalled {
   
     try{
 
-        $java = Get-WmiObject -Class win32_product | where { $_.Name -like "*Java*"}
+        $java = Get-WmiObject -Class win32_product | where { $_.Name -like "*Java SE Development Kit 7*"}
 
         return ($java.Count -gt 0)
 
