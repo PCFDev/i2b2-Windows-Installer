@@ -115,8 +115,10 @@ if($InstallShrine -eq $true){
 #clean up after ourself
 removeTempFolder
 
-if((Get-Service jboss).Status -eq "Stopped") {    
-    Start-Service -Name JBOSS
+$jboss = Get-Service -Name JBOSS -ErrorAction SilentlyContinue
+
+if(($jboss.Length -gt 0) -and ($jboss.Status -eq "Stopped")) {       
+    Start-Service $jboss
 }
 
 formatElapsedTime $__timer.Elapsed
