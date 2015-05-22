@@ -131,6 +131,21 @@ function isJavaInstalled {
 }
 
 
+function getJavaFolder {
+	    <#    
+    .SYNOPSIS Locate correct Java 7 Folder
+    #> 
+
+	$javaLoc = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\javaws.exe" -name "path").Path
+	$prepend = (Get-Item -Path $javaLoc).Parent.Parent.FullName
+	$append = Get-ChildItem -Path $prepend -Filter apt.exe -Recurse -Name
+	$javaFolder = "$prepend\$append"
+
+	$javaFolder = (Get-Item -Path $java.TrimEnd("apt.exe")).Parent.FullName
+
+	return $javaFolder
+}
+
 function removeTempFolder{  
 
     if(Test-Path $__tempFolder){
