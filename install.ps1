@@ -23,6 +23,9 @@ Extracts the i2b2 admin tool to the IIS default web site
 .PARAMETER InstallShrine
 Runs automated install for the SHRINE extension of i2b2
 
+.PARAMETER InstallPrereqs
+Install prerequisite software for i2b2 install
+
 .EXAMPLE
 .\install
 Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process and loads the demo data
@@ -38,6 +41,10 @@ Runs the installation of the i2b2 Server Requirements and the Data Installation 
 .EXAMPLE
 .\install -s $true
 Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process, loads the demo data and installs shrine
+
+.EXAMPLE
+.\install -p $false
+Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process, loads the demo data but does not install prerequisites
 
 #>
 [CmdletBinding()]
@@ -65,7 +72,11 @@ Param(
     
     [parameter(Mandatory=$false)]
 	[alias("s")]
-	[bool]$InstallShrine=$false
+	[bool]$InstallShrine=$false,
+
+	[parameter(Mandatory=$false)]
+	[alias("p")]
+	[bool]$InstallPrereqs=$true
 )
 
 <#
@@ -98,7 +109,10 @@ if($InstallShrine -eq $true){
 #Create a directory to work out of
 createTempFolder
 
-. .\install-prereqs.ps1
+
+if($InstallPrereqs -eq $true){    
+	. .\install-prereqs.ps1
+}
 
 if($InstallDatabases -eq $true){    
     . .\install-data.ps1

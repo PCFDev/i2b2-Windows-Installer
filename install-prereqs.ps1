@@ -226,21 +226,20 @@ function installTomcat($service=$true){
     
     #Download tomcat archive, unzip to temp directory, copy contents to shrine\tomcat folder
     #and remove the downloads and temp folders
-    if(Test-Path $__tempFolder\shrine\$__tomcatDownloadFolder.zip){
-        Remove-Item $__tempFolder\shrine\$__tomcatDownloadFolder.zip
+    if(Test-Path $__tempFolder\shrine\$__tomcatName.zip){
+        Remove-Item $__tempFolder\shrine\$__tomcatName.zip
     }
-    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\$__tomcatDownloadFolder.zip
+    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\$__tomcatName.zip
 
     echo "download complete."
     echo "unzipping archive..."
     
-    unzip $__tempFolder\shrine\$__tomcatDownloadFolder.zip $__tempFolder\shrine
+    unzip $__tempFolder\shrine\$__tomcatName.zip $__tempFolder\shrine
 
     echo "moving to tomcat directory"
 
     Copy-Item $__tempFolder\shrine\apache-tomcat-$__tomcatVersion\* -Destination $_SHRINE_HOME\tomcat -Container -Recurse
 
-	$__tomcatVersion.ToLower() 
     #This environment variable is required for Tomcat to run and to install as a service
     setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
 
@@ -250,9 +249,9 @@ function installTomcat($service=$true){
     echo "installing Tomcat service..."
     & "$Env:CATALINA_HOME\bin\service.bat" install
     
-	$tomcatName = $__tomcatName.ToLower()
+	$tomcatExe = $__tomcatName.ToLower()
 
-    & $Env:CATALINA_HOME\bin\$tomcatName //US//$__tomcatName --DisplayName="Apache Tomcat $__tomcatVersion"
+    & $Env:CATALINA_HOME\bin\$tomcatExe //US//$__tomcatName --DisplayName="Apache Tomcat $__tomcatVersion"
 
     echo "setting Tomcat service to Automatic and starting..."
     Set-Service $__tomcatName -StartupType Automatic
