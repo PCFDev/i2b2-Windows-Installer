@@ -32,16 +32,19 @@ $__axisDownloadUrl = "http://mirror.symnds.com/software/Apache/axis/axis2/java/c
 $__phpDownloadUrl = "http://windows.php.net/downloads/releases/php-5.5.25-nts-Win32-VC11-x86.zip"
 $__vcRedistDownloadUrl = "http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
 
+$__tomcatDownloadVersion = "8.0.23"
+$__tomcatDownloadFolder = "tomcat-" + $__tomcatDownloadVersion.Substring(0,1)
+$__tomcatDownloadFile = "apache-tomcat-" + $__tomcatDownloadVersion + "-windows-x"
 
 if([Environment]::Is64BitOperatingSystem -eq $true){    
 	$__javaDownloadUrl = "http://download.oracle.com/otn-pub/java/jdk/7u75-b13/jdk-7u75-windows-x64.exe"
     $__jbossServiceDownloadUrl = "http://downloads.jboss.org/jbossnative/2.0.10.GA/jboss-native-2.0.10-windows-x64-ssl.zip"
-    $__tomcatDownloadUrl = "http://ftp.wayne.edu/apache/tomcat/tomcat-8/v8.0.21/bin/apache-tomcat-8.0.21-windows-x64.zip"
+    $__tomcatDownloadUrl = "http://archive.apache.org/dist/tomcat/$__tomcatDownloadFolder/v$__tomcatDownloadVersion/bin/$__tomcatDownloadFile64.zip"
 
 } else {    
     $__javaDownloadUrl = "https://download.oracle.com/otn-pub/java/jdk/7u75-b13/jdk-7u75-windows-i586.exe"
     $__jbossServiceDownloadUrl = "http://downloads.jboss.org/jbossnative/2.0.10.GA/jboss-native-2.0.10-windows-x86-ssl.zip"
-    $__tomcatDownloadUrl = "http://ftp.wayne.edu/apache/tomcat/tomcat-8/v8.0.21/bin/apache-tomcat-8.0.21-windows-x86.zip"
+    $__tomcatDownloadUrl = "http://archive.apache.org/dist/tomcat/$__tomcatDownloadFolder/v$__tomcatDownloadVersion/bin/$__tomcatDownloadFile86.zip"
 }
    
 
