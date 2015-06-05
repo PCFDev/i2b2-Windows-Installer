@@ -226,36 +226,39 @@ function installTomcat($service=$true){
     
     #Download tomcat archive, unzip to temp directory, copy contents to shrine\tomcat folder
     #and remove the downloads and temp folders
-    if(Test-Path $__tempFolder\shrine\tomcat8.zip){
-        Remove-Item $__tempFolder\shrine\tomcat8.zip
+    if(Test-Path $__tempFolder\shrine\$__tomcatDownloadFolder.zip){
+        Remove-Item $__tempFolder\shrine\$__tomcatDownloadFolder.zip
     }
-    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\tomcat8.zip
+    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\$__tomcatDownloadFolder.zip
 
     echo "download complete."
     echo "unzipping archive..."
     
-    unzip $__tempFolder\shrine\tomcat8.zip $__tempFolder\shrine
+    unzip $__tempFolder\shrine\$__tomcatDownloadFolder.zip $__tempFolder\shrine
 
     echo "moving to tomcat directory"
 
-    Copy-Item $__tempFolder\shrine\apache-tomcat-8.0.21\* -Destination $_SHRINE_HOME\tomcat -Container -Recurse
+    Copy-Item $__tempFolder\shrine\apache-tomcat-$__tomcatVersion\* -Destination $_SHRINE_HOME\tomcat -Container -Recurse
 
+	$__tomcatVersion.ToLower() 
     #This environment variable is required for Tomcat to run and to install as a service
     setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
 
     if($service){
     #This will set the service to Automatic startup, rename it to Apache Tomcat 8.0 and start it.
 
-    echo "installing Tomcat8 service..."
+    echo "installing Tomcat service..."
     & "$Env:CATALINA_HOME\bin\service.bat" install
     
-    & $Env:CATALINA_HOME\bin\tomcat8 //US//Tomcat8 --DisplayName="Apache Tomcat 8.0"
+	$tomcatName = $__tomcatName.ToLower()
 
-    echo "setting Tomcat8 service to Automatic and starting..."
-    Set-Service Tomcat8 -StartupType Automatic
-    Start-Service Tomcat8   
+    & $Env:CATALINA_HOME\bin\$tomcatName //US//$__tomcatName --DisplayName="Apache Tomcat $__tomcatVersion"
 
-    echo "Tomcat8 service set to Automatic and running!"
+    echo "setting Tomcat service to Automatic and starting..."
+    Set-Service $__tomcatName -StartupType Automatic
+    Start-Service $__tomcatName   
+
+    echo "Tomcat service set to Automatic and running!"
     }
 
     echo "Tomcat is installed."
