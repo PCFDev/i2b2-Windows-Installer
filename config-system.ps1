@@ -20,8 +20,8 @@ $__dataInstallationZipFile = $__skelDirectory + "\i2b2\i2b2createdb-1704.zip"
 $__webclientZipFile = $__skelDirectory + "\i2b2\i2b2webclient-1704.zip"
 
 
-$__antFolderName = "apache-ant-1.9.4"
-$__antDownloadUrl = "http://mirror.tcpdiag.net/apache/ant/binaries/$__antFolderName-bin.zip"
+$__antFolderName = "apache-ant-1.9.5"
+$__antDownloadUrl = "http://archive.apache.org/dist/ant/binaries/$__antFolderName-bin.zip"
 
 $__jbossFolderName = "jboss-as-7.1.1.Final"
 $__jbossDownloadUrl = "http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/$__jbossFolderName.zip"
