@@ -266,7 +266,7 @@ function execSqlCmd([String]$server, [String] $dbType, [string]$database, [Strin
 	$connString = "Provider=$provider;Server=$server;Database=$database;Uid=$user;Pwd=$pass;"
 		
     $conn.ConnectionString = $connString
-    
+
     try{    
         $conn.Open() > $null    
         echo "Connected to $server"
