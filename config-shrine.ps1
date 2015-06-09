@@ -8,7 +8,7 @@ $_I2B2_DOMAIN_ID = "i2b2demo"
 
 #$_SHRINE_IP = ((Invoke-WebRequest "http://checkip.dyndns.com").ParsedHtml.Body.innerHTML -split ': ')[1]
 $_SHRINE_IP = $DEFAULT_I2B2_SERVER
-$_SHRINE_MSSQL_SERVER = $DEFAULT_DB_SERVER
+$_SHRINE_MSSQL_SERVER = localhost
 
 
 $_NEXUS_URL_BASE = "http://repo.open.med.harvard.edu/nexus/content/groups/public/net/shrine"

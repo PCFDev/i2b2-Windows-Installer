@@ -98,10 +98,10 @@ function installShrine{
         interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT > $__tempFolder\shrine\ready\cell_config_data.js
 
     #Interpolate shrine.xml with common settings
-    interpolate_file $__skelDirectory\shrine\tomcat\shrine.xml "SHRINE_SQL_USER" $_SHRINE_MSSQL_USER |
-        interpolate "SHRINE_SQL_PASSWORD" $_SHRINE_MSSQL_PASSWORD |
+    interpolate_file $__skelDirectory\shrine\tomcat\shrine.xml "SHRINE_SQL_USER" $SHRINE_DB_USER |
+        interpolate "SHRINE_SQL_PASSWORD" $SHRINE_DB_PASS |
         interpolate "SHRINE_SQL_SERVER" $_SHRINE_MSSQL_SERVER |
-        interpolate "SHRINE_SQL_DB" $_SHRINE_MSSQL_DB > $__tempFolder\shrine\ready\shrine.xml
+        interpolate "databaseName=SHRINE_SQL_DB" "instanceName=sqlexpress;databaseName=shrine_query_history" > $__tempFolder\shrine\ready\shrine.xml
 
     #Interpolate i2b2_config_data.js with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\i2b2_config_data.js "I2B2_PM_IP" $_I2B2_PM_IP |
