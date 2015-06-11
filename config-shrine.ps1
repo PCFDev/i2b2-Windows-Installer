@@ -4,12 +4,9 @@ Write-Host "importing configuration values"
 
 $_SHRINE_VERSION = "1.18.2"
 
-$_I2B2_DOMAIN_ID = "i2b2demo"
-
 #$_SHRINE_IP = ((Invoke-WebRequest "http://checkip.dyndns.com").ParsedHtml.Body.innerHTML -split ': ')[1]
 $_SHRINE_IP = $DEFAULT_I2B2_SERVER
 $_SHRINE_MSSQL_SERVER = localhost
-
 
 $_NEXUS_URL_BASE = "http://repo.open.med.harvard.edu/nexus/content/groups/public/net/shrine"
 $_SHRINE_SVN_URL_BASE = "https://open.med.harvard.edu/svn/shrine/releases/$_SHRINE_VERSION"
@@ -78,4 +75,4 @@ $_SHRINE_ADAPTER_I2B2_PROJECT = "Demo"
 
 #The i2b2 domain Shrine should use when making queries to an i2b2 hive.
 #NB: This needs to match I2B2_DOMAIN_ID:
-$_SHRINE_ADAPTER_I2B2_DOMAIN = "i2b2demo"
+#$_SHRINE_ADAPTER_I2B2_DOMAIN = "i2b2demo"

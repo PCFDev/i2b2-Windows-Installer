@@ -85,38 +85,42 @@ function installShrine{
     echo "Configuring tomcat server settings..."
 
     #Interpolate tomcat_server_8.xml with common settings
-    interpolate_file $__skelDirectory\shrine\tomcat\tomcat_server_8.xml "SHRINE_PORT" $_SHRINE_PORT |
-        interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT | 
-        interpolate "KEYSTORE_FILE" "$_SHRINE_HOME\shrine.keystore" |
-        interpolate "KEYSTORE_PASSWORD" "changeit" | Out-File -Encoding utf8 $__tempFolder\shrine\ready\server.xml
+    interpolate_file $__skelDirectory\shrine\tomcat\tomcat_server_8.xml SHRINE_PORT $_SHRINE_PORT |
+        interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT | 
+        interpolate KEYSTORE_FILE "$_SHRINE_HOME\shrine.keystore" |
+        interpolate KEYSTORE_PASSWORD "changeit" | Out-File -Encoding utf8 $__tempFolder\shrine\ready\server.xml
 
     echo "complete."
     echo "Configuring Shrine cell files..."
 
     #Interpolate cell_config_data.js with common settings
-    interpolate_file $__skelDirectory\shrine\tomcat\cell_config_data.js "SHRINE_IP" $_SHRINE_IP |
-        interpolate "SHRINE_SSL_PORT" $_SHRINE_SSL_PORT > $__tempFolder\shrine\ready\cell_config_data.js
+    interpolate_file $__skelDirectory\shrine\tomcat\cell_config_data.js SHRINE_IP $_SHRINE_IP |
+        interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT > $__tempFolder\shrine\ready\cell_config_data.js
 
     #Interpolate shrine.xml with common settings
-    interpolate_file $__skelDirectory\shrine\tomcat\shrine.xml "SHRINE_SQL_USER" $SHRINE_DB_USER |
-        interpolate "SHRINE_SQL_PASSWORD" $SHRINE_DB_PASS |
-        interpolate "SHRINE_SQL_SERVER" $_SHRINE_MSSQL_SERVER |
-        interpolate "databaseName=SHRINE_SQL_DB" "instanceName=sqlexpress;databaseName=shrine_query_history" > $__tempFolder\shrine\ready\shrine.xml
+    interpolate_file $__skelDirectory\shrine\tomcat\shrine.xml SHRINE_SQL_USER $SHRINE_DB_USER |
+        interpolate SHRINE_SQL_PASSWORD $SHRINE_DB_PASS |
+        interpolate SHRINE_SQL_SERVER $_SHRINE_MSSQL_SERVER |
+        interpolate databaseName= "instanceName=sqlexpress;" |
+		interpolate SHRINE_SQL_DB "databaseName=shrine_query_history" > $__tempFolder\shrine\ready\shrine.xml
 
     #Interpolate i2b2_config_data.js with common settings
-    interpolate_file $__skelDirectory\shrine\tomcat\i2b2_config_data.js "I2B2_PM_IP" $_I2B2_PM_IP |
-        interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME |
-        interpolate "I2B2_DOMAIN_ID" $I2B2_DOMAIN > $__tempFolder\shrine\ready\i2b2_config_data.js
+    interpolate_file $__skelDirectory\shrine\tomcat\i2b2_config_data.js I2B2_PM_IP $_I2B2_PM_IP |
+        interpolate SHRINE_NODE_NAME $_SHRINE_NODE_NAME |
+        interpolate I2B2_DOMAIN_ID $I2B2_DOMAIN > $__tempFolder\shrine\ready\i2b2_config_data.js
 
     #Interpolate shrine.conf with common settings
-    interpolate_file $__skelDirectory\shrine\tomcat\shrine.conf "I2B2_PM_IP" $_I2B2_PM_IP | interpolate "I2B2_ONT_IP" $_I2B2_ONT_IP |
-        interpolate "SHRINE_ADAPTER_I2B2_DOMAIN" $_SHRINE_ADAPTER_I2B2_DOMAIN |
-        interpolate "SHRINE_ADAPTER_I2B2_USER" $_SHRINE_ADAPTER_I2B2_USER | 
-        interpolate "SHRINE_ADAPTER_I2B2_PASSWORD" $_SHRINE_ADAPTER_I2B2_PASSWORD |
-        interpolate "SHRINE_ADAPTER_I2B2_PROJECT" $_SHRINE_ADAPTER_I2B2_PROJECT |
-        interpolate "I2B2_CRC_IP" $_I2B2_CRC_IP | interpolate "SHRINE_NODE_NAME" $_SHRINE_NODE_NAME |
-        interpolate "KEYSTORE_FILE" (escape $_KEYSTORE_FILE) | interpolate "KEYSTORE_PASSWORD" $_KEYSTORE_PASSWORD |
-        interpolate "KEYSTORE_ALIAS" $_KEYSTORE_ALIAS > $__tempFolder\shrine\ready\shrine.conf
+    interpolate_file $__skelDirectory\shrine\tomcat\shrine.conf I2B2_PM_IP $_I2B2_PM_IP | 
+		interpolate I2B2_ONT_IP $_I2B2_ONT_IP |
+        interpolate SHRINE_ADAPTER_I2B2_DOMAIN $I2B2_DOMAIN |
+        interpolate SHRINE_ADAPTER_I2B2_USER $_SHRINE_ADAPTER_I2B2_USER | 
+        interpolate SHRINE_ADAPTER_I2B2_PASSWORD $_SHRINE_ADAPTER_I2B2_PASSWORD |
+        interpolate SHRINE_ADAPTER_I2B2_PROJECT $_SHRINE_ADAPTER_I2B2_PROJECT |
+        interpolate I2B2_CRC_IP $_I2B2_CRC_IP | 
+		interpolate SHRINE_NODE_NAME $_SHRINE_NODE_NAME |
+        interpolate KEYSTORE_FILE (escape $_KEYSTORE_FILE) | 
+		interpolate KEYSTORE_PASSWORD $_KEYSTORE_PASSWORD |
+        interpolate KEYSTORE_ALIAS $_KEYSTORE_ALIAS > $__tempFolder\shrine\ready\shrine.conf
 
     echo "complete."
     echo "moving configured files to tomcat installation..."
