@@ -1,6 +1,6 @@
 ﻿Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-echo "Importing functions"
+report "Importing functions"
 
 function exec{
     Param(
@@ -10,7 +10,7 @@ function exec{
 	    [string]$args = ""
     )
 
-    echo "Running " $path $args
+    report "Running " $path $args
 
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = $path
@@ -28,15 +28,22 @@ function exec{
 
     
     if($p.ExitCode -ne 0) {
-        echo "stdout: $stdout"
-        echo "stderr: $stderr"
-        echo "exit code: " + $p.ExitCode
+        report "stdout: $stdout"
+        report "stderr: $stderr"
+        report "exit code: " + $p.ExitCode
     	Throw "ERROR"
     }
 
-     echo $path " completed"
+     report $path " completed"
 
 
+}
+
+function report($message) {
+	if($Logging -eq $true){
+		Add-Content "`n" + $message
+	}
+        echo "$message"
 }
 
 function removeFromPath($path) {
@@ -80,7 +87,7 @@ function addToPath($pathToAppend){
 
     if(![System.Environment]::GetEnvironmentVariable("PATH").Contains($pathToAppend)){
 
-        echo "Adding $($pathToAppend) to PATH"
+        report "Adding $($pathToAppend) to PATH"
         
 
         #verify that the current path ends with ; or append it to the start of the pathToAppend
@@ -91,7 +98,7 @@ function addToPath($pathToAppend){
      
         $newPath = ($env:PATH + $pathToAppend)
 
-        echo "New path: $newPath"
+        report "New path: $newPath"
 
         setEnvironmentVariable "PATH" $newPath
     }
@@ -174,7 +181,7 @@ function unzip($zipFile, $folderPath, $removeFolder = $false) {
         }
     }
     catch {
-     echo ("Could not remove folder " + $folderPath)
+     report ("Could not remove folder " + $folderPath)
     }
 
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipFile, $folderPath)
@@ -184,7 +191,7 @@ function unzip($zipFile, $folderPath, $removeFolder = $false) {
 function interpolate($Pattern, $Replacement){
 
     begin {}
-    process {echo $_.Replace($Pattern, $Replacement) }
+    process {report $_.Replace($Pattern, $Replacement) }
     end {}
 
 }
@@ -195,19 +202,19 @@ function interpolate_file($InputFile, $Pattern, $Replacement){
 
     Get-Content $InputFile | Foreach-Object {$_.Replace($Pattern,  $Replacement)} | Set-Variable  -Name "replaced"
 
-    echo $replaced
+    report $replaced
 
 }
 
 function escape([string] $value){
-    echo $value.Replace('\', '\\')
+    report $value.Replace('\', '\\')
 }
 
 function hash([string] $value){    
     $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
     $utf8 = new-object -TypeName System.Text.UTF8Encoding
     $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($value))).ToLower().Replace('-', '')
-    echo $hash
+    report $hash
 }
 
 function formatElapsedTime($ts) {
@@ -269,10 +276,10 @@ function execSqlCmd([String]$server, [String] $dbType, [string]$database, [Strin
 
     try{    
         $conn.Open() > $null    
-        echo "Connected to $server"
+        report "Connected to $server"
     }
     catch {
-        echo "Could not connect to database server: $server"
+        report "Could not connect to database server: $server"
         exit -1
     }
    
@@ -295,18 +302,18 @@ function execSqlCmd([String]$server, [String] $dbType, [string]$database, [Strin
 
 
 function createDatabase($dbname){
-    echo "Creating database: $dbname"
+    report "Creating database: $dbname"
 
     $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\create_database.sql DB_NAME $dbname
 
 	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
-    echo "$dbname created"
+    report "$dbname created"
 }
 
 
 function createUser($dbname, $user, $pass, $schema){
-    echo "Creating user: $user"
+    report "Creating user: $user"
 
     $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\create_user.sql DB_NAME $dbname |
         interpolate DB_USER $user |
@@ -315,23 +322,23 @@ function createUser($dbname, $user, $pass, $schema){
 	
 	execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $dbname $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
-    echo "$user created"
+    report "$user created"
 }
 
 
 function removeDatabase($dbname){
-    echo "Removing database: $dbname"
+    report "Removing database: $dbname"
 
     $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\remove_database.sql DB_NAME $dbname
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
-    echo "Database $dbname removed"
+    report "Database $dbname removed"
 
 }
 
 function removeUser($dbname, $user, $pass, $schema){
-    echo "Removing user: $user"
+    report "Removing user: $user"
 
     $sql = interpolate_file $__skelDirectory\database\$DEFAULT_DB_TYPE\remove_user.sql DB_NAME $dbname |
         interpolate DB_USER $user |
@@ -340,5 +347,5 @@ function removeUser($dbname, $user, $pass, $schema){
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE "master" $DEFAULT_DB_ADMIN_USER $DEFAULT_DB_ADMIN_PASS $sql
 
-    echo "User $user removed"
+    report "User $user removed"
 }

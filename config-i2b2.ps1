@@ -4,6 +4,9 @@ $JBOSS_PORT = "9090"
 $JBOSS_ADMIN = "jbossAdmin"
 $JBOSS_PASS = "jbossP@ss"
 
+#Logging
+$Logging = $false
+
 #i2b2 domain config
 $I2B2_DOMAIN="i2b2demo"
 $I2B2_HIVE_NAME="Local Demo"

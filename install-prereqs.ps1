@@ -16,13 +16,15 @@ function installJava{
         $cookie = "oraclelicense=accept-securebackup-cookie"
         $client.Headers.Add([System.Net.HttpRequestHeader]::Cookie, $cookie) 
 
-        echo "Downloading Java JDK"
+        report "Downloading Java JDK"
     
         $client.downloadFile($__javaDownloadUrl, $__tempFolder + "\jdk.exe")
-    
-        echo "Java Downloaded"
+    		if($Logging -eq $true){
+			Add-Content "`n" + "Test"
+		}
+        report "Java Downloaded"
 
-        echo "Installing Java to $env:JAVA_HOME"
+        report "Installing Java to $env:JAVA_HOME"
 
         $__javaInstallerPath = $__tempFolder + "\jdk.exe"
 
@@ -32,26 +34,26 @@ function installJava{
     }
     else{
 
-		echo "Setting JAVA_HOME directory..."
+		report "Setting JAVA_HOME directory..."
 
 		$javaPath = getJavaFolder
 		setEnvironmentVariable JAVA_HOME $javaPath
 		addToPath "$env:JAVA_HOME\bin;"
 
 	}
-	echo "Java Installed"
+	report "Java Installed"
 }
 
 function installAnt {
     if((isAntInstalled) -eq $false){
 
-        echo "Downloading ant"
+        report "Downloading ant"
   
         wget $__antDownloadUrl -OutFile $__tempFolder"\ant.zip"
 
-        echo "Ant Downloaded"
+        report "Ant Downloaded"
 
-        echo "Installing Ant"
+        report "Installing Ant"
  
         unzip $__tempFolder"\ant.zip" $env:ANT_HOME"\..\"
 
@@ -59,19 +61,19 @@ function installAnt {
 
         addToPath "$env:ANT_HOME\bin;"
     }
-    echo "Ant Installed"
+    report "Ant Installed"
 }
 
 function installJBoss{
     if((test-path $env:JBOSS_HOME) -eq $false){
       
-        echo "Downloading $__jbossDownloadUrl"
+        report "Downloading $__jbossDownloadUrl"
 
         wget $__jbossDownloadUrl -OutFile $__tempFolder\jboss.zip
      
-        echo "JBOSS downloaded"
+        report "JBOSS downloaded"
 
-        echo "Installing JBOSS"
+        report "Installing JBOSS"
 
         unzip $__tempFolder\jboss.zip $env:JBOSS_HOME\..\
 
@@ -86,19 +88,19 @@ function installJBoss{
         addToPath "$env:JBOSS_HOME\bin;"
 
     }
-    echo "JBOSS Installed"
+    report "JBOSS Installed"
 }
 
 function installJBossService{
     $jbossSvc = Get-Service jboss*
     if($jbossSvc -eq $null){
-        echo "Downloading $__jbossServiceDownloadUrl"
+        report "Downloading $__jbossServiceDownloadUrl"
     
         wget $__jbossServiceDownloadUrl -OutFile $__tempFolder\jboss-svc.zip
             
-        echo "JBOSS Service downloaded"
+        report "JBOSS Service downloaded"
 
-        echo "Installing JBOSS Service"
+        report "Installing JBOSS Service"
         
         unzip $__tempFolder\jboss-svc.zip $env:JBOSS_HOME
         
@@ -108,31 +110,31 @@ function installJBossService{
 
         Set-Service jboss -StartupType Automatic
        
-        echo "Adding management user to JBOSS"
+        report "Adding management user to JBOSS"
 
         $hashPass = hash ($JBOSS_ADMIN + ":ManagementRealm:" + $JBOSS_PASS)
 
         $jbossUser = "$JBOSS_ADMIN=$hashPass" 
 
-        echo $jbossUser
+        report $jbossUser
 
-        echo ([Environment]::NewLine)$jbossUser |
+        report ([Environment]::NewLine)$jbossUser |
             Out-File  $env:JBOSS_HOME\standalone\configuration\mgmt-users.properties -Append -Encoding utf8
     }
-    echo "JBOSS service installed"
+    report "JBOSS service installed"
 }
 
 function installAxis{
     if(!(Test-Path "$env:JBOSS_HOME\standalone\deployments\i2b2.war"))
     {
         
-        echo "Downloading AXIS"
+        report "Downloading AXIS"
        
         wget $__axisDownloadUrl -OutFile $__tempFolder\axis2-1.6.2-war.zip
       
-        echo "AXIS downloaded"
+        report "AXIS downloaded"
 
-        echo "Installing AXIS War"
+        report "Installing AXIS War"
 
         unzip $__tempFolder\axis2-1.6.2-war.zip $__tempFolder\axis2-1.6.2-war $true
   
@@ -145,44 +147,44 @@ function installAxis{
 
     }
 
-    echo "AXIS War Installed"
+    report "AXIS War Installed"
 }
 
 function installIIS {
     $iis =  Get-WindowsOptionalFeature -FeatureName IIS-WebServerRole -Online
 
     if($iis.State -ne "Enabled"){
-        echo "Installing IIS"
+        report "Installing IIS"
     
         Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -NoRestart
     }
-    echo "IIS Installed"
+    report "IIS Installed"
 }
 
 function installPHP{
 
     if((Test-Path $__phpInstallFolder) -eq $false){
 
-        echo "Downloading PHP"      
+        report "Downloading PHP"      
         #Reference: http://php.net/manual/en/install.windows.manual.php
         wget $__phpDownloadUrl -OutFile $__tempFolder/php.zip
-        echo "PHP Downloaded"
+        report "PHP Downloaded"
 
-        echo "Installing PHP"
+        report "Installing PHP"
 
         unzip $__tempFolder/php.zip $__phpInstallFolder
         cp $__skelDirectory\php\php.ini $__phpInstallFolder\php.ini
      
-        echo "Downloading Visual C++ Redistributable for Visual Studio 2012 Update 4"
+        report "Downloading Visual C++ Redistributable for Visual Studio 2012 Update 4"
         wget $__vcRedistDownloadUrl -OutFile $__tempFolder/vcredist_x86.exe    
         #cp .\_downloads\vcredist_x86.exe $__tempFolder\vcredist_x86.exe
-        echo "Visual C++ Redistributable for Visual Studio 2012 Update 4 downloaded"
+        report "Visual C++ Redistributable for Visual Studio 2012 Update 4 downloaded"
 
-        echo "Installing Visual C++ Redistributable for Visual Studio 2012 Update 4"
+        report "Installing Visual C++ Redistributable for Visual Studio 2012 Update 4"
         exec $__tempFolder\vcredist_x86.exe '/install /quiet'
-        echo "Visual C++ Redistributable for Visual Studio 2012 Update 4 installed"
+        report "Visual C++ Redistributable for Visual Studio 2012 Update 4 installed"
 
-        echo "Configuring IIS"
+        report "Configuring IIS"
         #Reference: http://php.net/manual/en/install.windows.iis7.php
         $cgi =  Get-WindowsOptionalFeature -FeatureName IIS-CGI -Online
 
@@ -196,11 +198,11 @@ function installPHP{
         #Creating handler mapping for PHP requests      
         & $env:WinDir\system32\inetsrv\appcmd.exe set config  -section:system.webServer/handlers /+"[name='PHP-FastCGI',path='*.php',verb='GET,HEAD,POST',modules='FastCgiModule',scriptProcessor='c:\php\php-cgi.exe',resourceType='Either']"
 
-        echo "IIS Configured"
+        report "IIS Configured"
 
         addToPath c:\php
     }
-    echo "PHP Installed"
+    report "PHP Installed"
 }
 
 #Takes the boolean value $service for option to install tomcat service
@@ -209,20 +211,20 @@ function installTomcat($service=$true){
 
 
     #Create temp downloads folder
-    echo "creating directories..."
+    report "creating directories..."
     if(!(Test-Path $__tempFolder\shrine )){
-        echo "creating temporary download location..."
+        report "creating temporary download location..."
         mkdir $__tempFolder\shrine
     }
 
-    echo "creating tomcat directory..."
+    report "creating tomcat directory..."
     if(Test-Path $_SHRINE_HOME\tomcat ){
         Remove-Item $_SHRINE_HOME\tomcat -Recurse
     }
     mkdir $_SHRINE_HOME\tomcat
-    echo "tomcat directory created."
+    report "tomcat directory created."
 
-    echo "downloading tomcat archive..."
+    report "downloading tomcat archive..."
     
     #Download tomcat archive, unzip to temp directory, copy contents to shrine\tomcat folder
     #and remove the downloads and temp folders
@@ -231,12 +233,12 @@ function installTomcat($service=$true){
     }
     Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\$__tomcatName.zip
 
-    echo "download complete."
-    echo "unzipping archive..."
+    report "download complete."
+    report "unzipping archive..."
     
     unzip $__tempFolder\shrine\$__tomcatName.zip $__tempFolder\shrine
 
-    echo "moving to tomcat directory"
+    report "moving to tomcat directory"
 
     Copy-Item $__tempFolder\shrine\apache-tomcat-$__tomcatVersion\* -Destination $_SHRINE_HOME\tomcat -Container -Recurse
 
@@ -246,21 +248,21 @@ function installTomcat($service=$true){
     if($service){
     #This will set the service to Automatic startup, rename it to Apache Tomcat 8.0 and start it.
 
-    echo "installing Tomcat service..."
+    report "installing Tomcat service..."
     & "$Env:CATALINA_HOME\bin\service.bat" install
     
 	$tomcatExe = $__tomcatName.ToLower()
 
     & $Env:CATALINA_HOME\bin\$tomcatExe //US//$__tomcatName --DisplayName="Apache Tomcat $__tomcatVersion"
 
-    echo "setting Tomcat service to Automatic and starting..."
+    report "setting Tomcat service to Automatic and starting..."
     Set-Service $__tomcatName -StartupType Automatic
     Start-Service $__tomcatName   
 
-    echo "Tomcat service set to Automatic and running!"
+    report "Tomcat service set to Automatic and running!"
     }
 
-    echo "Tomcat is installed."
+    report "Tomcat is installed."
 }
 
 installJava

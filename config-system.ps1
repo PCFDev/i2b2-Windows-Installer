@@ -1,4 +1,4 @@
-echo "Loading system configuration"
+report "Loading system configuration"
 
 ##############################
 #DO NOT EDIT: SYSTEM VARIABLES
@@ -6,9 +6,10 @@ echo "Loading system configuration"
 $OutputEncoding=[System.Text.UTF8Encoding]::UTF8
 
 $__rootFolder = "c:\opt"
+
 $__phpInstallFolder = "C:\php"
 $__webclientInstallFolder = "c:\inetpub\wwwroot"
-
+$__logFile = $__rootFolder + "\" + $(Get-Date -Format g) + " i2b2_install.log"
 $__currentDirectory = (Get-Item -Path ".\" -Verbose).FullName
 $__skelDirectory = $__currentDirectory + "\skel"
 $__tempFolder = $__currentDirectory + "\.temp"

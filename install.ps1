@@ -26,6 +26,9 @@ Runs automated install for the SHRINE extension of i2b2
 .PARAMETER InstallPrereqs
 Install prerequisite software for i2b2 install
 
+.PARAMETER EnableLogging
+Keep a written log in addition to console
+
 .EXAMPLE
 .\install
 Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process and loads the demo data
@@ -45,6 +48,10 @@ Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Inst
 .EXAMPLE
 .\install -p $false
 Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process, loads the demo data but does not install prerequisites
+
+.EXAMPLE
+.\install -r $true
+Runs the installation of the i2b2 Server Requirements, i2b2 cells, the Data Installation process, loads the demo data and writes to a log file concurrently
 
 #>
 [CmdletBinding()]
@@ -76,7 +83,11 @@ Param(
 
 	[parameter(Mandatory=$false)]
 	[alias("p")]
-	[bool]$InstallPrereqs=$true
+	[bool]$InstallPrereqs=$true,
+
+	[parameter(Mandatory=$false)]
+	[alias("r")]
+	[bool]$EnableLogging=$false
 )
 
 <#
@@ -102,7 +113,12 @@ if($InstallShrine -eq $true){
 
     New-Item $__rootFolder -Type directory -Force > $null
 
-    echo "Created " $__rootFolder
+    report "Created " + $__rootFolder
+}
+
+if($EnableLogging -eq $true){
+	New-Item $__LogFile -Type file -Force
+	$Logging = $true
 }
   
 

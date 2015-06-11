@@ -1,6 +1,6 @@
 
 function installServerCommon {
-    echo "Installing server common"
+    report "Installing server common"
     cd $__sourceCodeRootFolder\edu.harvard.i2b2.server-common
 
     interpolate_file $__skelDirectory\i2b2\server-common\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -8,11 +8,11 @@ function installServerCommon {
     ant clean dist deploy jboss_pre_deployment_setup
 
     cd ..
-    echo "Server common installed"
+    report "Server common installed"
 }
 
 function installPM{
-    echo "Installing PM Cell"
+    report "Installing PM Cell"
     cd edu.harvard.i2b2.pm
 
     interpolate_file $__skelDirectory\i2b2\pm\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -28,11 +28,11 @@ function installPM{
     ant -file master_build.xml clean build-all deploy
 
     cd ..
-    echo "PM Cell Installed"
+    report "PM Cell Installed"
 }
 
 function installONT{
-    echo "Installing ONT Cell"
+    report "Installing ONT Cell"
     cd edu.harvard.i2b2.ontology
 
     interpolate_file $__skelDirectory\i2b2\ontology\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -64,12 +64,12 @@ function installONT{
     ant -file master_build.xml clean build-all deploy
 
     cd ..
-    echo "ONT Cell Installed"
+    report "ONT Cell Installed"
 }
 
 function installCRC {
 
-    echo "Installing CRC Cell"
+    report "Installing CRC Cell"
     cd edu.harvard.i2b2.crc
 
     interpolate_file $__skelDirectory\i2b2\crc\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -114,14 +114,14 @@ function installCRC {
     ant -file master_build.xml clean build-all deploy
 
     cd ..
-    echo "CRC Cell Installed"
+    report "CRC Cell Installed"
 
 
 }
 
 function installWorkplace {
 
-    echo "Installing Workplace Cell"
+    report "Installing Workplace Cell"
     cd edu.harvard.i2b2.workplace
 
     interpolate_file $__skelDirectory\i2b2\workplace\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -149,12 +149,12 @@ function installWorkplace {
     ant -file master_build.xml clean build-all deploy
 
     cd ..
-    echo "Workplace Cell Installed"
+    report "Workplace Cell Installed"
 }
 
 function installFR {
 
-    echo "Installing FR Cell"
+    report "Installing FR Cell"
     cd edu.harvard.i2b2.fr
 
     interpolate_file $__skelDirectory\i2b2\fr\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -168,12 +168,12 @@ function installFR {
     ant -file master_build.xml clean build-all deploy
 
     cd ..
-    echo "FR Cell Installed"
+    report "FR Cell Installed"
 }
 
 function installIM {
 
-    echo "Installing IM Cell"
+    report "Installing IM Cell"
     cd edu.harvard.i2b2.im
 
     interpolate_file $__skelDirectory\i2b2\im\build.properties JBOSS_HOME (escape $env:JBOSS_HOME) | sc build.properties
@@ -200,11 +200,11 @@ function installIM {
     ant -file master_build.xml clean build-all deploy
 
     cd ..
-    echo "IM Cell Installed"
+    report "IM Cell Installed"
 }
 
 function installWebClient{
-    echo "Installing i2b2 webclient..."
+    report "Installing i2b2 webclient..."
     unzip $__webclientZipFile $__webclientInstallFolder $true
 
    
@@ -218,12 +218,12 @@ function installWebClient{
         interpolate PM_SERVICE_URL $PM_SERVICE_URL |
         sc $__webclientInstallFolder\webclient\i2b2_config_data.js
 
-    echo "Web Client installed to $__webclientInstallFolder"
+    report "Web Client installed to $__webclientInstallFolder"
 
 }
 
 function installAdminTool{
-    echo "Installing i2b2 admin tool..."
+    report "Installing i2b2 admin tool..."
 
     cp  $__sourceCodeRootFolder\admin $__webClientInstallFolder -Force -Recurse
 
@@ -234,13 +234,13 @@ function installAdminTool{
         sc $__webclientInstallFolder\admin\i2b2_config_data.js
 
 
-    echo "i2b2 admin tool installed"
+    report "i2b2 admin tool installed"
 }
 
 
-echo "Extracting i2b2 source..."
+report "Extracting i2b2 source..."
 unzip $__sourceCodeZipFile $__sourceCodeRootFolder $true
-echo "Source extracted to $__sourceCodeRootFolder"
+report "Source extracted to $__sourceCodeRootFolder"
 
 if(!(Test-Path $__sourceCodeRootFolder))
 {

@@ -25,8 +25,8 @@ default directory. It will also install Tomcat 8.0 as a service running automati
 
 function prepareInstall(){
 
-    echo "Preparing for installation..."     
-    echo "creating temporary Shrine setup locations..."    
+    report "Preparing for installation..."     
+    report "creating temporary Shrine setup locations..."    
     
     #Create temp setup folder
     if(!(Test-Path $__tempFolder\shrine\setup)){
@@ -37,16 +37,16 @@ function prepareInstall(){
     if(!(Test-Path $__tempFolder\shrine\ready)){
         mkdir $__tempFolder\shrine\ready
     }
-    echo "Shrine setup locations created."
+    report "Shrine setup locations created."
 
-    echo "installing Subversion"
+    report "installing Subversion"
     #Download and install Subversion
     $SVNUrl = "http://downloads.sourceforge.net/project/win32svn/1.8.11/apache22/svn-win32-1.8.11.zip?"
     Invoke-WebRequest  $SVNUrl -OutFile $__tempFolder\shrine\setup\subversion.zip -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
     unzip $__tempFolder\shrine\setup\subversion.zip $__tempFolder\shrine\setup\svn
-    echo "Subversion is installed. Moving on..."
+    report "Subversion is installed. Moving on..."
 
-    echo "Finished preparing."
+    report "Finished preparing."
 }
 
 function installShrine{
@@ -63,26 +63,26 @@ function installShrine{
 
     $ShrineAdapterMappingsURL = "$_SHRINE_SVN_URL_BASE/ontology/SHRINE_Demo_Downloads/AdapterMappings_i2b2_DemoData.xml"
     
-    echo "getting source files..."
-    echo "downloading shrine and shrine-proxy war files..."
+    report "getting source files..."
+    report "downloading shrine and shrine-proxy war files..."
     
     #Download shrine.war and shrine-proxy.war to tomcat
     Invoke-WebRequest $ShrineWarURL  -OutFile $__tempFolder\shrine\setup\shrine.war
     Invoke-WebRequest $ShrineProxyURL  -OutFile $__tempFolder\shrine\setup\shrine-proxy.war
     
-    echo "shrine and shrine-proxy war files downloaded."
-    echo "downloading shrine-webclient to tomcat..."
+    report "shrine and shrine-proxy war files downloaded."
+    report "downloading shrine-webclient to tomcat..."
     
     #run to copy shrine-webclient to webapps folder in tomcat
     & "$__tempFolder\shrine\setup\svn\svn-win32-1.8.11\bin\svn.exe" checkout $_SHRINE_SVN_URL_BASE/code/shrine-webclient/  $__tempFolder\shrine\setup\shrine-webclient > $null
 
-    echo "shrine-webclient downloaded."
-    echo "downloading AdapterMappings.xml file to tomcat..."
+    report "shrine-webclient downloaded."
+    report "downloading AdapterMappings.xml file to tomcat..."
    
     Invoke-WebRequest $ShrineAdapterMappingsURL  -OutFile $__tempFolder\shrine\setup\AdapterMappings.xml
 
-    echo "AdapterMappings.xml downloaded."
-    echo "Configuring tomcat server settings..."
+    report "AdapterMappings.xml downloaded."
+    report "Configuring tomcat server settings..."
 
     #Interpolate tomcat_server_8.xml with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\tomcat_server_8.xml SHRINE_PORT $_SHRINE_PORT |
@@ -90,8 +90,8 @@ function installShrine{
         interpolate KEYSTORE_FILE "$_SHRINE_HOME\shrine.keystore" |
         interpolate KEYSTORE_PASSWORD "changeit" | Out-File -Encoding utf8 $__tempFolder\shrine\ready\server.xml
 
-    echo "complete."
-    echo "Configuring Shrine cell files..."
+    report "complete."
+    report "Configuring Shrine cell files..."
 
     #Interpolate cell_config_data.js with common settings
     interpolate_file $__skelDirectory\shrine\tomcat\cell_config_data.js SHRINE_IP $_SHRINE_IP |
@@ -122,8 +122,8 @@ function installShrine{
 		interpolate KEYSTORE_PASSWORD $_KEYSTORE_PASSWORD |
         interpolate KEYSTORE_ALIAS $_KEYSTORE_ALIAS > $__tempFolder\shrine\ready\shrine.conf
 
-    echo "complete."
-    echo "moving configured files to tomcat installation..."
+    report "complete."
+    report "moving configured files to tomcat installation..."
 
     #Copy relevant files to proper locations
     mkdir $_SHRINE_TOMCAT_HOME\webapps\shrine-webclient
@@ -138,8 +138,8 @@ function installShrine{
     Copy-Item $__tempFolder\shrine\setup\AdapterMappings.xml $_SHRINE_TOMCAT_LIB
     Copy-Item $__skelDirectory\shrine\sqlserver\sqljdbc4.jar $_SHRINE_TOMCAT_LIB\sqljdbc4.jar
 
-    echo "move complete."
-    echo "restarting Tomcat Service (if installed)..."
+    report "move complete."
+    report "restarting Tomcat Service (if installed)..."
 
     Restart-Service Tomcat8
     }
@@ -150,41 +150,41 @@ function createCert{
     #This function will generate a keypair and a keystore according to the settings in common.ps1
     #It will export the created certificate to the $_SHRINE_HOME location
 
-    echo "Generating Shrine keystore and SSL certificate..."
+    report "Generating Shrine keystore and SSL certificate..."
 
     & "$Env:JAVA_HOME\bin\keytool.exe" -genkeypair -keysize 2048 -alias $_KEYSTORE_ALIAS -dname "CN=$_KEYSTORE_ALIAS, OU=$_KEYSTORE_HUMAN, O=SHRINE Network, L=$_KEYSTORE_CITY, S=$_KEYSTORE_STATE, C=$_KEYSTORE_COUNTRY" -keyalg RSA -keypass $_KEYSTORE_PASSWORD -storepass $_KEYSTORE_PASSWORD -keystore $_KEYSTORE_FILE -validity 7300
     & "$Env:JAVA_HOME\bin\keytool.exe" -noprompt -export -alias $_KEYSTORE_ALIAS -keystore $_KEYSTORE_FILE -storepass $_KEYSTORE_PASSWORD -file "$_SHRINE_HOME\$_KEYSTORE_ALIAS.cer"
 
-    echo "complete."
+    report "complete."
 }
 
 
 function createShrineDB{
 
-    echo "Creating Shrine Database..."
+    report "Creating Shrine Database..."
 
     createDatabase $SHRINE_DB_NAME
 
-    echo "Shrine Database created."
-    echo "Creating Shrine DB user..."
+    report "Shrine Database created."
+    report "Creating Shrine DB user..."
 
     createUser $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $DEFAULT_DB_SCHEMA
 
-    echo "Shrine DB User created."
+    report "Shrine DB User created."
 }
 
 
 function updateDatasources{
 
-    echo "Updating Ontology datasources..."
-    echo "creating backup of datasource files..."
+    report "Updating Ontology datasources..."
+    report "creating backup of datasource files..."
 
     #making backup of datasource file
     mkdir $_SHRINE_HOME\Datasource_Backup
     Copy-Item $env:JBOSS_HOME\standalone\deployments\ont-ds.xml $_SHRINE_HOME\Datasource_Backup\ont-ds.xml
 
-    echo "datasource files backed up to $SHRINE_HOME\Datasource_Backup folder."
-    echo "configuring new ontology datasource file..."
+    report "datasource files backed up to $SHRINE_HOME\Datasource_Backup folder."
+    report "configuring new ontology datasource file..."
 
     #configuring template to replace current ont-ds.xml
     interpolate_file $__skelDirectory\shrine\sqlserver\ont-ds.xml I2B2_DB_HIVE_DATASOURCE_NAME "OntologyBootStrapDS" |
@@ -200,15 +200,15 @@ function updateDatasources{
         interpolate I2B2_DB_SHRINE_ONT_USER $ONT_DB_USER |
         interpolate I2B2_DB_SHRINE_ONT_PASSWORD $SHRINE_DB_PASS | sc $env:JBOSS_HOME\standalone\deployments\ont-ds.xml -Force
 
-        echo "complete."
-        echo "Ontology datasource update complete."
+        report "complete."
+        report "Ontology datasource update complete."
 
 }
 
 function updateDB{
     
-    echo "Beginning Shrine updates to I2B2 DB..."
-    echo "updating hive database..."
+    report "Beginning Shrine updates to I2B2 DB..."
+    report "updating hive database..."
 
     $sql = interpolate_file $__skelDirectory\shrine\$DEFAULT_DB_TYPE\configure_hive_db_lookups.sql DB_NAME $HIVE_DB_NAME |
         interpolate I2B2_DOMAIN_ID $I2B2_DOMAIN |
@@ -220,9 +220,9 @@ function updateDB{
         interpolate I2B2_DB_CRC_DATASOURCE_NAME $CRC_DB_DATASOURCE
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $HIVE_DB_NAME $HIVE_DB_USER $HIVE_DB_PASS $sql
-    echo "complete."
+    report "complete."
 	
-    echo "updating pm cell database..."
+    report "updating pm cell database..."
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\configure_pm.sql DB_NAME $PM_DB_NAME |
         interpolate SHRINE_USER $SHRINE_DB_USER |
         interpolate SHRINE_PASSWORD_CRYPTED (hash $SHRINE_DB_PASS) |
@@ -231,26 +231,26 @@ function updateDB{
         interpolate SHRINE_SSL_PORT $_SHRINE_SSL_PORT
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $PM_DB_NAME $PM_DB_USER $PM_DB_PASS $sql
-	echo "complete."
+	report "complete."
     
   
-    echo "Executing Shrine adapter.sql"
+    report "Executing Shrine adapter.sql"
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\adapter.sql DB_NAME $SHRINE_DB_NAME 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql
-    echo "complete"
+    report "complete"
 
 
-    echo "Executing Shrine hub.sql"    
+    report "Executing Shrine hub.sql"    
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\hub.sql DB_NAME $SHRINE_DB_NAME 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql    
-    echo "complete."
+    report "complete."
 	
-	echo "Executing Shrine create_broadcaster_audit_table.sql"   
+	report "Executing Shrine create_broadcaster_audit_table.sql"   
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\create_broadcaster_audit_table.sql DB_NAME $SHRINE_DB_NAME    
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $SHRINE_DB_NAME $SHRINE_DB_USER $SHRINE_DB_PASS $sql        
-    echo "complete"
+    report "complete"
 	
-    echo "updating ontology records..." 
+    report "updating ontology records..." 
 
     #Now using ontConn for ontology edits
 
@@ -261,7 +261,7 @@ function updateDB{
     $HUB_SQL_FILE_URL = "$_SHRINE_SVN_URL_BASE/code/broadcaster-aggregator/src/main/resources/hub.sql"
     $AUDIT_TABLE_SQL_FILE_URL = "$_SHRINE_SVN_URL_BASE/code/service/src/main/resources/create_broadcaster_audit_table.sql"
 
-    echo "creating tables..."
+    report "creating tables..."
 
     #Configure create_tables sql template, create sql command, execute
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\ontology_create_tables.sql DB_NAME $ONT_DB_NAME |
@@ -269,8 +269,8 @@ function updateDB{
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
 
-    echo "complete."
-    echo "updating table access..."
+    report "complete."
+    report "updating table access..."
 
     #Configure table_access sql template, create sql command, execute
     $sql = interpolate_file $__skelDirectory\shrine\sqlserver\ontology_table_access.sql DB_NAME $ONT_DB_NAME |
@@ -278,8 +278,8 @@ function updateDB{
 
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
 
-    echo "complete."
-    echo "downloading and running Shrine Ontology..."
+    report "complete."
+    report "downloading and running Shrine Ontology..."
 
     #Download sql files
     Invoke-WebRequest $SHRINE_SQL_FILE_URL -OutFile $__skelDirectory\shrine\sqlserver\shrine.sql
@@ -290,26 +290,26 @@ function updateDB{
     execSqlCmd $DEFAULT_DB_SERVER $DEFAULT_DB_TYPE $ONT_DB_NAME $ONT_DB_USER $ONT_DB_PASS $sql
 
 
-    echo "Shrine Ontology added."
-    echo "ontology records updated."
-    echo "cleaning up ontology files..."
+    report "Shrine Ontology added."
+    report "ontology records updated."
+    report "cleaning up ontology files..."
 
     Remove-Item $__skelDirectory\shrine\sqlserver\shrine.sql
 
-    echo "complete."
+    report "complete."
 
-    echo "i2b2 Database Tables updated."
+    report "i2b2 Database Tables updated."
 }
 
 prepareInstall
 
-echo "Beginning Shrine client install..."
+report "Beginning Shrine client install..."
 createCert
 installShrine
-echo "Shrine client installation complete!"
+report "Shrine client installation complete!"
 
-echo "Starting Shrine Data Installation..."
+report "Starting Shrine Data Installation..."
 createShrineDB
 updateDB
 updateDatasources
-echo "Shrine Data Installation complete!"
+report "Shrine Data Installation complete!"

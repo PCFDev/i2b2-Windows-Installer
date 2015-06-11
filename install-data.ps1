@@ -16,19 +16,19 @@
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
     
-    echo "Installing CRC Tables"    
+    report "Installing CRC Tables"    
     ant -f "$buildFile" create_crcdata_tables_release_1-7
 
-    echo "Installing CRC Stored Procedures"
+    report "Installing CRC Stored Procedures"
     ant -f "$buildFile" create_procedures_release_1-7
 
     if($InstallDemoData -eq $true){
-        echo "Loading CRC demo data"
+        report "Loading CRC demo data"
         ant -f "$buildFile" db_demodata_load_data        
     }
     
     cd ..
-    echo "CRC Data Installed"
+    report "CRC Data Installed"
 
 }
 
@@ -48,19 +48,19 @@ function installHive{
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
-    echo "Installing Hive Tables"
+    report "Installing Hive Tables"
 
     ant -f "$buildFile" create_hivedata_tables_release_1-7
 
 
     if($InstallDemoData -eq $true){
-       echo "Loading Hive demo data"
+       report "Loading Hive demo data"
 
        ant -f "$buildFile" db_hivedata_load_data
     }
 
     cd ..
-    echo "Hive Data Installed"
+    report "Hive Data Installed"
 }
 
 function installIM{
@@ -80,16 +80,16 @@ function installIM{
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
-    echo "Installing IM Tables"
+    report "Installing IM Tables"
     ant -f "$buildFile" create_imdata_tables_release_1-7
     
     if($InstallDemoData -eq $true){
-        echo "Loading IM demo data"
+        report "Loading IM demo data"
         ant -f "$buildFile"  db_imdata_load_data
     }
 
     cd ..
-    echo "IM Data Installed"
+    report "IM Data Installed"
 }
 
 function installOnt{
@@ -109,16 +109,16 @@ function installOnt{
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
-    echo "Installing ONT Tables"
+    report "Installing ONT Tables"
     ant -f "$buildFile" create_metadata_tables_release_1-7
     
     if($InstallDemoData -eq $true){
-        echo "Loading ONT demo data"
+        report "Loading ONT demo data"
         ant -f "$buildFile" db_metadata_load_data
     }
 
     cd ..
-    echo "Metadata Data Installed"
+    report "Metadata Data Installed"
 }
 
 function installPM{
@@ -138,22 +138,22 @@ function installPM{
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
-    echo "Installing PM Tables"
+    report "Installing PM Tables"
 
     ant -f "$buildFile" create_pmdata_tables_release_1-7
 
-    echo "Installing PM Triggers"
+    report "Installing PM Triggers"
     
 
     ant -f "$buildFile" create_triggers_release_1-7
     
     if($InstallDemoData -eq $true){
-        echo "Loading PM demo data"
+        report "Loading PM demo data"
         ant -f "$buildFile" db_pmdata_load_data
     }
 
     cd ..
-    echo "PM Data Installed"
+    report "PM Data Installed"
 }
 
 function installWork{
@@ -173,17 +173,17 @@ function installWork{
         interpolate I2B2_PROJECT_NAME $I2B2_PROJECT_NAME |
         sc db.properties
 
-    echo "Installing Work Tables"
+    report "Installing Work Tables"
 
     ant -f "$buildFile" create_workdata_tables_release_1-7
   
     if($InstallDemoData -eq $true){
-        echo "Loading Work demo data"
+        report "Loading Work demo data"
         ant -f "$buildFile" db_workdata_load_data
     }
 
     cd ..
-    echo "Work Data Installed"
+    report "Work Data Installed"
 }
 
 
@@ -195,12 +195,12 @@ require $DEFAULT_DB_ADMIN_PASS "Database admin password must be set in the confi
 require $DEFAULT_DB_TYPE "Database type must be set in the configuration"
 require $DEFAULT_DB_SERVER "Database server must be set in the configuration"
 
-echo "Starting i2b2 Data Installation"
+report "Starting i2b2 Data Installation"
 
 
-echo "Extracting data creation scripts..."
+report "Extracting data creation scripts..."
 unzip $__dataInstallationZipFile $__sourceCodeRootFolder $true
-echo "Source extracted to $__sourceCodeRootFolder"
+report "Source extracted to $__sourceCodeRootFolder"
 
 if(!(Test-Path $__sourceCodeRootFolder))
 {
@@ -219,4 +219,4 @@ installWork
 
 cd $__currentDirectory
 
-echo "i2b2 Data Installation Completed"
+report "i2b2 Data Installation Completed"
