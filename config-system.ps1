@@ -9,7 +9,7 @@ $__rootFolder = "c:\opt"
 
 $__phpInstallFolder = "C:\php"
 $__webclientInstallFolder = "c:\inetpub\wwwroot"
-$__logFile = $__rootFolder + "\" + $(Get-Date -Format g) + " i2b2_install.log"
+$__logFileName = "$(Get-Date -Format g)_i2b2_install.log"
 $__currentDirectory = (Get-Item -Path ".\" -Verbose).FullName
 $__skelDirectory = $__currentDirectory + "\skel"
 $__tempFolder = $__currentDirectory + "\.temp"

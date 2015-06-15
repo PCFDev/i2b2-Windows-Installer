@@ -116,15 +116,13 @@ if($InstallShrine -eq $true){
     report "Created " + $__rootFolder
 }
 
-if($EnableLogging -eq $true){
-	New-Item $__LogFile -Type file -Force
-	$Logging = $true
-}
-  
-
 #Create a directory to work out of
 createTempFolder
 
+
+if($EnableLogging -eq $true){
+	$Logging = $true
+}
 
 if($InstallPrereqs -eq $true){    
 	. .\install-prereqs.ps1

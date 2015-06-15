@@ -81,8 +81,8 @@ function installJBoss{
 
         mv $env:JBOSS_HOME\standalone\configuration\standalone.xml $env:JBOSS_HOME\standalone\configuration\standalone.xml.bak
 
-        interpolate_file skel\jboss\standalone.xml "JBOSS_ADDRESS" $JBOSS_ADDRESS |
-            interpolate "JBOSS_PORT" $JBOSS_PORT | 
+        interpolate_file skel\jboss\standalone.xml JBOSS_ADDRESS $JBOSS_ADDRESS |
+            interpolate JBOSS_PORT $JBOSS_PORT | 
             Out-File -Encoding utf8 $env:JBOSS_HOME\standalone\configuration\standalone.xml
     
         addToPath "$env:JBOSS_HOME\bin;"

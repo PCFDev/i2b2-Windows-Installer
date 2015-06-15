@@ -1,6 +1,10 @@
 ﻿Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-report "Importing functions"
+	if($Logging -eq $true){
+		Add-Content "`n" + "Importing functions"
+	}
+    echo "Importing functions"
+
 
 function exec{
     Param(
@@ -10,7 +14,7 @@ function exec{
 	    [string]$args = ""
     )
 
-    report "Running " $path $args
+    report "Running $path $args"
 
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = $path
@@ -34,16 +38,16 @@ function exec{
     	Throw "ERROR"
     }
 
-     report $path " completed"
+     report "$path completed"
 
 
 }
 
 function report($message) {
 	if($Logging -eq $true){
-		Add-Content "`n" + $message
+		Add-Content "$__rootFolder\$logFileName" "`n$message"
 	}
-        echo "$message"
+        echo $message
 }
 
 function removeFromPath($path) {
@@ -191,7 +195,7 @@ function unzip($zipFile, $folderPath, $removeFolder = $false) {
 function interpolate($Pattern, $Replacement){
 
     begin {}
-    process {report $_.Replace($Pattern, $Replacement) }
+    process {echo $_.Replace($Pattern, $Replacement) }
     end {}
 
 }
@@ -202,19 +206,19 @@ function interpolate_file($InputFile, $Pattern, $Replacement){
 
     Get-Content $InputFile | Foreach-Object {$_.Replace($Pattern,  $Replacement)} | Set-Variable  -Name "replaced"
 
-    report $replaced
+    echo $replaced
 
 }
 
 function escape([string] $value){
-    report $value.Replace('\', '\\')
+    echo $value.Replace('\', '\\')
 }
 
 function hash([string] $value){    
     $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
     $utf8 = new-object -TypeName System.Text.UTF8Encoding
     $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($value))).ToLower().Replace('-', '')
-    report $hash
+    echo $hash
 }
 
 function formatElapsedTime($ts) {
