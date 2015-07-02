@@ -74,7 +74,7 @@ function createBackupFolder{
 
         New-Item $__rootFolder -Type directory -Force > $null
 
-        report "Created " $__rootFolder
+        echo "Created " $__rootFolder
     }
 
 
@@ -82,7 +82,7 @@ function createBackupFolder{
 
         New-Item $__rootFolder\backup -Type directory -Force > $null
 
-        report "Created $__rootFolder\backup"
+        echo "Created $__rootFolder\backup"
     }
 }
 
@@ -101,7 +101,7 @@ function removeJBOSS {
         Remove-Item $env:JBOSS_HOME\bin\service.bat -force
         Remove-Item $env:JBOSS_HOME\bin\README-service.txt -force
 
-        report "Removing JBOSS..."
+        echo "Removing JBOSS..."
 
         if($RemoveCells -eq $false){
 
@@ -109,7 +109,7 @@ function removeJBOSS {
 
 	       cp $env:JBOSS_HOME\standalone $__rootFolder\backup\
 
-           report "I2B2 Cells backuped up to $__rootFolder\backup\"
+           echo "I2B2 Cells backuped up to $__rootFolder\backup\"
         }
 
         Remove-Item  $env:JBOSS_HOME -recurse -force
@@ -158,7 +158,7 @@ function removeIIS{
     $iis =  Get-WindowsOptionalFeature -FeatureName IIS-WebServerRole -Online
 
     if($iis.State -eq "Enabled"){
-        report "Removing IIS"
+        echo "Removing IIS"
         Disable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -NoRestart
     }
 
@@ -166,7 +166,7 @@ function removeIIS{
 
 function removePHP{
     if(Test-Path "c:\php"){
-        report "Removing PHP"
+        echo "Removing PHP"
         exec iisreset '/stop'
         Remove-Item  "c:\php" -recurse -force
         removeFromPath "c:\php"
@@ -183,7 +183,7 @@ function removeDatabases{
      try{    
 
         $conn.Open() > $null    
-        report "Connected to $DEFAULT_DB_SERVER"
+        echo "Connected to $DEFAULT_DB_SERVER"
 
         removeUser $CRC_DB_NAME $CRC_DB_USER $CRC_DB_PASS $DEFAULT_DB_SCHEMA    
         removeDatabase $CRC_DB_NAME
@@ -206,7 +206,7 @@ function removeDatabases{
     
     }
     catch {
-        report "Could not conect to database server: $DEFAULT_DB_SERVER"
+        echo "Could not conect to database server: $DEFAULT_DB_SERVER"
     
     }
 }
@@ -238,4 +238,4 @@ if($RemovePrereqs -eq $true){
     removeIIS
 }
 
-report "done."
+echo "done."

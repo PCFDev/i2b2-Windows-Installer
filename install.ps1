@@ -113,7 +113,7 @@ if($InstallShrine -eq $true){
 
     New-Item $__rootFolder -Type directory -Force > $null
 
-    report "Created " + $__rootFolder
+    echo "Created " + $__rootFolder
 }
 
 #Create a directory to work out of

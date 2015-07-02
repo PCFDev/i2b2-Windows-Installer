@@ -1,4 +1,4 @@
-report "Loading system configuration"
+echo "Loading system configuration"
 
 ##############################
 #DO NOT EDIT: SYSTEM VARIABLES
