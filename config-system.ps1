@@ -27,10 +27,10 @@ $__antDownloadUrl = "http://archive.apache.org/dist/ant/binaries/$__antFolderNam
 $__jbossFolderName = "jboss-as-7.1.1.Final"
 $__jbossDownloadUrl = "http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/$__jbossFolderName.zip"
 
-$__axisDownloadUrl = "http://mirror.symnds.com/software/Apache/axis/axis2/java/core/1.6.2/axis2-1.6.2-war.zip"
+$__axisDownloadUrl = "http://mirror.symnds.com/software/Apache/axis/axis2/java/core/1.6.2/axis2-1.6.3-war.zip"
 
 #NOTE: PHP should run 32-bit Non-ThreadSafe version
-$__phpDownloadUrl = "http://windows.php.net/downloads/releases/php-5.5.25-nts-Win32-VC11-x86.zip"
+$__phpDownloadUrl = "http://windows.php.net/downloads/releases/php-5.5.29-nts-Win32-VC11-x86.zip"
 $__vcRedistDownloadUrl = "http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
 
 $__tomcatVersion = "8.0.23"
