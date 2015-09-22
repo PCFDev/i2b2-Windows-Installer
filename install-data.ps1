@@ -17,14 +17,14 @@
         sc db.properties
     
     echo "Installing CRC Tables"    
-    ant -f "$buildFile" create_crcdata_tables_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_crcdata_tables_release_1-7
 
     echo "Installing CRC Stored Procedures"
-    ant -f "$buildFile" create_procedures_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_procedures_release_1-7
 
     if($InstallDemoData -eq $true){
         echo "Loading CRC demo data"
-        ant -f "$buildFile" db_demodata_load_data   > "$__rootFolder\$logFileName" 2>&1      
+        ant -f "$buildFile" db_demodata_load_data        
     }
     
     cd ..
@@ -50,13 +50,13 @@ function installHive{
 
     echo "Installing Hive Tables"
 
-    ant -f "$buildFile" create_hivedata_tables_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_hivedata_tables_release_1-7
 
 
     if($InstallDemoData -eq $true){
        echo "Loading Hive demo data"
 
-       ant -f "$buildFile" db_hivedata_load_data > "$__rootFolder\$logFileName" 2>&1
+       ant -f "$buildFile" db_hivedata_load_data
     }
 
     cd ..
@@ -81,11 +81,11 @@ function installIM{
         sc db.properties
 
     echo "Installing IM Tables"
-    ant -f "$buildFile" create_imdata_tables_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_imdata_tables_release_1-7
     
     if($InstallDemoData -eq $true){
         echo "Loading IM demo data"
-        ant -f "$buildFile"  db_imdata_load_data > "$__rootFolder\$logFileName" 2>&1
+        ant -f "$buildFile"  db_imdata_load_data
     }
 
     cd ..
@@ -110,11 +110,11 @@ function installOnt{
         sc db.properties
 
     echo "Installing ONT Tables"
-    ant -f "$buildFile" create_metadata_tables_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_metadata_tables_release_1-7
     
     if($InstallDemoData -eq $true){
         echo "Loading ONT demo data"
-        ant -f "$buildFile" db_metadata_load_data > "$__rootFolder\$logFileName" 2>&1
+        ant -f "$buildFile" db_metadata_load_data
     }
 
     cd ..
@@ -140,16 +140,16 @@ function installPM{
 
     echo "Installing PM Tables"
 
-    ant -f "$buildFile" create_pmdata_tables_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_pmdata_tables_release_1-7
 
     echo "Installing PM Triggers"
     
 
-    ant -f "$buildFile" create_triggers_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_triggers_release_1-7
     
     if($InstallDemoData -eq $true){
         echo "Loading PM demo data"
-        ant -f "$buildFile" db_pmdata_load_data > "$__rootFolder\$logFileName" 2>&1
+        ant -f "$buildFile" db_pmdata_load_data
     }
 
     cd ..
@@ -175,11 +175,11 @@ function installWork{
 
     echo "Installing Work Tables"
 
-    ant -f "$buildFile" create_workdata_tables_release_1-7 > "$__rootFolder\$logFileName" 2>&1
+    ant -f "$buildFile" create_workdata_tables_release_1-7
   
     if($InstallDemoData -eq $true){
         echo "Loading Work demo data"
-        ant -f "$buildFile" db_workdata_load_data > "$__rootFolder\$logFileName" 2>&1
+        ant -f "$buildFile" db_workdata_load_data
     }
 
     cd ..
