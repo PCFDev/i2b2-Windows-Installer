@@ -1,11 +1,11 @@
 
-require $env:JAVA_HOME "JAVA_HOME must be set"
-require $env:ANT_HOME "ANT_HOME must be set"
-require $env:JBOSS_HOME "JBOSS_HOME must be set"
-require $JBOSS_ADDRESS "JBOSS_ADDRESS must be set"
-require $JBOSS_PORT "JBOSS_PORT must be set"
-require $JBOSS_ADMIN "JBOSS_ADMIN must be set"
-require $JBOSS_PASS "JBOSS_PASS must be set"
+#require $env:JAVA_HOME "JAVA_HOME must be set"
+#require $env:ANT_HOME "ANT_HOME must be set"
+#require $env:JBOSS_HOME "JBOSS_HOME must be set"
+#require $JBOSS_ADDRESS "JBOSS_ADDRESS must be set"
+#require $JBOSS_PORT "JBOSS_PORT must be set"
+#require $JBOSS_ADMIN "JBOSS_ADMIN must be set"
+#require $JBOSS_PASS "JBOSS_PASS must be set"
 
 #Install chocolatey https://chocolatey.org/
 function installChocolatey{
@@ -14,7 +14,7 @@ function installChocolatey{
 
 function installJava{
 	
-	
+echo "Java Installing"
     if((isJavaInstalled) -eq $false){
 		choco install jdk7 -y
 	
@@ -33,9 +33,11 @@ function installJava{
 }
 
 function installAnt {
+	echo "Installing Ant"
+	
     if((isAntInstalled) -eq $false){
 
-		choco install ant -y
+		choco install ant -y -i
 
         #addToPath "$env:ANT_HOME\bin;"
     }
@@ -103,8 +105,8 @@ function installJBossService{
 }
 
 function installAxis{
-#$__axisVersion = "1.6.1"
-#$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
+	$__axisVersion = "1.6.1"
+	$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
 
     if(!(Test-Path "$env:JBOSS_HOME\webapps\i2b2.war"))
     {
@@ -163,12 +165,12 @@ function installPHP{
 #$service is true by default
 function installTomcat($service=$true){
 
-
+	echo "Installing Tomcat"
  
     #This environment variable is required for Tomcat to run and to install as a service
     setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
 
-	choco install tomcat -packageparameters '"/InstallLocation=$env:JBOSS_HOME"' -y
+	choco install tomcat -packageparameters '"/InstallLocation=$env:JBOSS_HOME"' -y -i -version 8.0.26
 
     echo "Tomcat is installed."
 }
@@ -177,12 +179,14 @@ installChocolatey
 installJava
 installAnt
 
-if($InstallCells -eq $true){
-    #installJBoss
-    #installJBossService
-	installTomcat
-    installAxis
-}
+#if($InstallCells -eq $true){
+#    #installJBoss
+#    #installJBossService
+#	installTomcat
+#    installAxis
+#}
+installTomcat
+installAxis
 
 if(($InstallWebClient -eq $true) -or ($InstallAdminTool -eq $true)){
     installIIS

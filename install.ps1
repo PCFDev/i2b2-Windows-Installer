@@ -59,11 +59,11 @@ Param(
 
     [parameter(Mandatory=$false)]
 	[alias("d")]
-	[bool]$InstallDatabases=$true,
+	[bool]$InstallDatabases=$false,
 
     [parameter(Mandatory=$false)]
 	[alias("demo")]
-	[bool]$InstallDemoData=$true,
+	[bool]$InstallDemoData=$false,
 
     [parameter(Mandatory=$false)]
 	[alias("c")]
@@ -71,11 +71,11 @@ Param(
 
     [parameter(Mandatory=$false)]
 	[alias("w")]
-	[bool]$InstallWebClient=$true,
+	[bool]$InstallWebClient=$false,
 
     [parameter(Mandatory=$false)]
 	[alias("a")]
-	[bool]$InstallAdminTool=$true,
+	[bool]$InstallAdminTool=$false,
     
     [parameter(Mandatory=$false)]
 	[alias("s")]
@@ -100,7 +100,7 @@ Param(
     April 14, 2015
 #>
 $__timer = [Diagnostics.Stopwatch]::StartNew()
-
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 . .\functions.ps1
 . .\config-system.ps1
 . .\config-i2b2.ps1
@@ -129,7 +129,7 @@ if($InstallPrereqs -eq $true){
 }
 
 if($InstallDatabases -eq $true){    
-    . .\install-data.ps1
+    #. .\install-data.ps1
 }
 
 if($InstallCells -eq $true){
@@ -137,16 +137,16 @@ if($InstallCells -eq $true){
 }
 
 if($InstallShrine -eq $true){
-    . .\install-shrine.ps1
+    #. .\install-shrine.ps1
 }
 
 #clean up after ourself
-removeTempFolder
+#removeTempFolder
 
-$jboss = Get-Service -Name JBOSS -ErrorAction SilentlyContinue
+#$jboss = Get-Service -Name JBOSS -ErrorAction SilentlyContinue
 
-if(($jboss.Length -gt 0) -and ($jboss.Status -eq "Stopped")) {       
-    Start-Service $jboss
-}
+#if(($jboss.Length -gt 0) -and ($jboss.Status -eq "Stopped")) {       
+#    Start-Service $jboss
+#}
 
 formatElapsedTime $__timer.Elapsed

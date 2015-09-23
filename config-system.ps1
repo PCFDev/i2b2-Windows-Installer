@@ -27,8 +27,8 @@ $__antDownloadUrl = "http://archive.apache.org/dist/ant/binaries/$__antFolderNam
 $__jbossFolderName = "jboss-as-7.1.1.Final"
 $__jbossDownloadUrl = "http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/$__jbossFolderName.zip"
 
-$__axisVersion = "1.6.1"
-$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
+#$__axisVersion = "1.6.1"
+#$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
 
 #NOTE: PHP should run 32-bit Non-ThreadSafe version
 $__phpDownloadUrl = "http://windows.php.net/downloads/releases/php-5.5.29-nts-Win32-VC11-x86.zip"
@@ -51,9 +51,9 @@ if([Environment]::Is64BitOperatingSystem -eq $true){
 }
    
 
-export JAVA_HOME="$__rootFolder\java"
-export ANT_HOME="$__rootFolder\ant"
-export JBOSS_HOME="$__rootFolder\jboss"
+#export JAVA_HOME="$__rootFolder\java"
+#export ANT_HOME="$__rootFolder\ant"
+export JBOSS_HOME="$__rootFolder\tomcat"
 export NOPAUSE=1
 
 ##############################
