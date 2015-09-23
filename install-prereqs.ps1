@@ -8,29 +8,17 @@ require $JBOSS_ADMIN "JBOSS_ADMIN must be set"
 require $JBOSS_PASS "JBOSS_PASS must be set"
 
 #Install chocolatey https://chocolatey.org/
-#iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+function installChocolatey{
+	iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+}
 
 function installJava{
+	
+	
     if((isJavaInstalled) -eq $false){
-        $client = new-object System.Net.WebClient 
-        $cookie = "oraclelicense=accept-securebackup-cookie"
-        $client.Headers.Add([System.Net.HttpRequestHeader]::Cookie, $cookie) 
-
-        echo "Downloading Java JDK"
-    
-        $client.downloadFile($__javaDownloadUrl, $__tempFolder + "\jdk.exe")
-    		if($Logging -eq $true){
-			Add-Content "`n" + "Test"
-		}
-        echo "Java Downloaded"
-
-        echo "Installing Java to $env:JAVA_HOME"
-
-        $__javaInstallerPath = $__tempFolder + "\jdk.exe"
-
-        exec $__javaInstallerPath '/s INSTALLDIR=c:\opt\java /L C:\opt\java-install.log'    
-
-        addToPath "$env:JAVA_HOME\bin;"
+		choco install jdk7 -y
+	
+        #addToPath "$env:JAVA_HOME\bin;"
     }
     else{
 
@@ -47,19 +35,9 @@ function installJava{
 function installAnt {
     if((isAntInstalled) -eq $false){
 
-        echo "Downloading ant"
-  
-        wget $__antDownloadUrl -OutFile $__tempFolder"\ant.zip"
+		choco install ant -y
 
-        echo "Ant Downloaded"
-
-        echo "Installing Ant"
- 
-        unzip $__tempFolder"\ant.zip" $env:ANT_HOME"\..\"
-
-        mv $env:ANT_HOME"\..\"$__antFolderName $env:ANT_HOME   
-
-        addToPath "$env:ANT_HOME\bin;"
+        #addToPath "$env:ANT_HOME\bin;"
     }
     echo "Ant Installed"
 }
@@ -125,24 +103,27 @@ function installJBossService{
 }
 
 function installAxis{
-    if(!(Test-Path "$env:JBOSS_HOME\standalone\deployments\i2b2.war"))
+#$__axisVersion = "1.6.1"
+#$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
+
+    if(!(Test-Path "$env:JBOSS_HOME\webapps\i2b2.war"))
     {
         
         echo "Downloading AXIS"
        
-        wget $__axisDownloadUrl -OutFile $__tempFolder\axis2-1.6.2-war.zip
+        wget $__axisDownloadUrl -OutFile $__tempFolder\axis2-$__axisVersion-war.zip
       
         echo "AXIS downloaded"
 
         echo "Installing AXIS War"
 
-        unzip $__tempFolder\axis2-1.6.2-war.zip $__tempFolder\axis2-1.6.2-war $true
+        unzip $__tempFolder\axis2-$__axisVersion-war.zip $__tempFolder\axis2-$__axisVersion-war $true
   
-        unzip $__tempFolder\axis2-1.6.2-war\axis2.war $__tempFolder\i2b2.war $true
+        unzip $__tempFolder\axis2-$__axisVersion-war\axis2.war $__tempFolder\i2b2.war $true
 
-        mv -Force $__tempFolder\i2b2.war\ $env:JBOSS_HOME\standalone\deployments\
+        mv -Force $__tempFolder\i2b2.war\ $env:JBOSS_HOME\webapps\
 
-        echo "" > $env:JBOSS_HOME\standalone\deployments\i2b2.war.dodeploy
+        echo "" > $env:JBOSS_HOME\webapps\i2b2.war.dodeploy
    
 
     }
@@ -165,42 +146,15 @@ function installPHP{
 
     if((Test-Path $__phpInstallFolder) -eq $false){
 
-        echo "Downloading PHP"      
-        #Reference: http://php.net/manual/en/install.windows.manual.php
-        wget $__phpDownloadUrl -OutFile $__tempFolder/php.zip
-        echo "PHP Downloaded"
 
         echo "Installing PHP"
 
-        unzip $__tempFolder/php.zip $__phpInstallFolder
-        cp $__skelDirectory\php\php.ini $__phpInstallFolder\php.ini
+		choco install php -y
+		
+        #unzip $__tempFolder/php.zip $__phpInstallFolder
+        #cp $__skelDirectory\php\php.ini $__phpInstallFolder\php.ini
      
-        echo "Downloading Visual C++ Redistributable for Visual Studio 2012 Update 4"
-        wget $__vcRedistDownloadUrl -OutFile $__tempFolder/vcredist_x86.exe    
-        #cp .\_downloads\vcredist_x86.exe $__tempFolder\vcredist_x86.exe
-        echo "Visual C++ Redistributable for Visual Studio 2012 Update 4 downloaded"
-
-        echo "Installing Visual C++ Redistributable for Visual Studio 2012 Update 4"
-        exec $__tempFolder\vcredist_x86.exe '/install /quiet'
-        echo "Visual C++ Redistributable for Visual Studio 2012 Update 4 installed"
-
-        echo "Configuring IIS"
-        #Reference: http://php.net/manual/en/install.windows.iis7.php
-        $cgi =  Get-WindowsOptionalFeature -FeatureName IIS-CGI -Online
-
-        if($cgi.State -ne "Enabled"){
-            Enable-WindowsOptionalFeature -FeatureName IIS-CGI -Online -NoRestart
-        }
-
-        #Creating IIS FastCGI process pool
-        & $env:WinDir\system32\inetsrv\appcmd.exe set config -section:system.webServer/fastCgi /+"[fullPath='c:\php\php-cgi.exe']" /commit:apphost
-       
-        #Creating handler mapping for PHP requests      
-        & $env:WinDir\system32\inetsrv\appcmd.exe set config  -section:system.webServer/handlers /+"[name='PHP-FastCGI',path='*.php',verb='GET,HEAD,POST',modules='FastCgiModule',scriptProcessor='c:\php\php-cgi.exe',resourceType='Either']"
-
-        echo "IIS Configured"
-
-        addToPath c:\php
+   
     }
     echo "PHP Installed"
 }
@@ -210,67 +164,23 @@ function installPHP{
 function installTomcat($service=$true){
 
 
-    #Create temp downloads folder
-    echo "creating directories..."
-    if(!(Test-Path $__tempFolder\shrine )){
-        echo "creating temporary download location..."
-        mkdir $__tempFolder\shrine
-    }
-
-    echo "creating tomcat directory..."
-    if(Test-Path $_SHRINE_HOME\tomcat ){
-        Remove-Item $_SHRINE_HOME\tomcat -Recurse
-    }
-    mkdir $_SHRINE_HOME\tomcat
-    echo "tomcat directory created."
-
-    echo "downloading tomcat archive..."
-    
-    #Download tomcat archive, unzip to temp directory, copy contents to shrine\tomcat folder
-    #and remove the downloads and temp folders
-    if(Test-Path $__tempFolder\shrine\$__tomcatName.zip){
-        Remove-Item $__tempFolder\shrine\$__tomcatName.zip
-    }
-    Invoke-WebRequest $__tomcatDownloadUrl -OutFile $__tempFolder\shrine\$__tomcatName.zip
-
-    echo "download complete."
-    echo "unzipping archive..."
-    
-    unzip $__tempFolder\shrine\$__tomcatName.zip $__tempFolder\shrine
-
-    echo "moving to tomcat directory"
-
-    Copy-Item $__tempFolder\shrine\apache-tomcat-$__tomcatVersion\* -Destination $_SHRINE_HOME\tomcat -Container -Recurse
-
+ 
     #This environment variable is required for Tomcat to run and to install as a service
     setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
 
-    if($service){
-    #This will set the service to Automatic startup, rename it to Apache Tomcat 8.0 and start it.
-
-    echo "installing Tomcat service..."
-    & "$Env:CATALINA_HOME\bin\service.bat" install
-    
-	$tomcatExe = $__tomcatName.ToLower()
-
-    & $Env:CATALINA_HOME\bin\$tomcatExe //US//$__tomcatName --DisplayName="Apache Tomcat $__tomcatVersion"
-
-    echo "setting Tomcat service to Automatic and starting..."
-    Set-Service $__tomcatName -StartupType Automatic
-    Start-Service $__tomcatName   
-
-    echo "Tomcat service set to Automatic and running!"
-    }
+	choco install tomcat -packageparameters '"/InstallLocation=$env:JBOSS_HOME"' -y
 
     echo "Tomcat is installed."
 }
 
+installChocolatey
 installJava
 installAnt
 
 if($InstallCells -eq $true){
-    installJBoss
-    installJBossService
+    #installJBoss
+    #installJBossService
+	installTomcat
     installAxis
 }
 
@@ -279,6 +189,6 @@ if(($InstallWebClient -eq $true) -or ($InstallAdminTool -eq $true)){
     installPHP
 }
 
-if($InstallShrine -eq $true){
-    installTomcat
-}
+#if($InstallShrine -eq $true){
+#    installTomcat
+#}
