@@ -9,26 +9,54 @@
 
 #Install chocolatey https://chocolatey.org/
 function installChocolatey{
-	iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-}
-
-function installJava{
-	
-echo "Java Installing"
-    if((isJavaInstalled) -eq $false){
-		choco install jdk7 -y
-	
-        #addToPath "$env:JAVA_HOME\bin;"
-    }
-    else{
-
-		echo "Setting JAVA_HOME directory..."
-
-		$javaPath = getJavaFolder
-		setEnvironmentVariable JAVA_HOME $javaPath
-		addToPath "$env:JAVA_HOME\bin;"
-
+	if ((Get-Command choco) -eq $null){
+		iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 	}
+}
+#region Choco Functions...
+function Get-EnvironmentVariable([string] $Name, [System.EnvironmentVariableTarget] $Scope) {
+    [Environment]::GetEnvironmentVariable($Name, $Scope)
+}
+function Get-EnvironmentVariableNames([System.EnvironmentVariableTarget] $Scope) {
+    switch ($Scope) {
+        'User' { Get-Item 'HKCU:\Environment' | Select-Object -ExpandProperty Property }
+        'Machine' { Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' | Select-Object -ExpandProperty Property }
+        'Process' { Get-ChildItem Env:\ | Select-Object -ExpandProperty Key }
+        default { throw "Unsupported environment scope: $Scope" }
+    }
+}
+function Update-SessionEnvironment{
+	Write-Debug "Running 'Update-SessionEnvironment' - Updating the environment variables for the session."
+
+	#ordering is important here, $user comes after so we can override $machine
+	'Machine', 'User' |
+		% {
+		  $scope = $_
+		  Get-EnvironmentVariableNames -Scope $scope |
+			% {
+			  Set-Item "Env:$($_)" -Value (Get-EnvironmentVariable -Scope $scope -Name $_)
+			}
+		}
+
+	  #Path gets special treatment b/c it munges the two together
+	  $paths = 'Machine', 'User' |
+		% {
+		  (Get-EnvironmentVariable -Name 'PATH' -Scope $_) -split ';'
+		} |
+		Select -Unique
+	  $Env:PATH = $paths -join ';'
+}
+#endregion Choco Functions
+
+function installJava{	
+	echo "Java Installing"
+
+	choco install jdk7 -y
+
+	#this choco package does not update the session so we do it here to ensure java_home is set...	
+	Update-SessionEnvironment
+  
+  
 	echo "Java Installed"
 }
 
@@ -121,11 +149,11 @@ function installAxis{
 
         unzip $__tempFolder\axis2-$__axisVersion-war.zip $__tempFolder\axis2-$__axisVersion-war $true
   
-        unzip $__tempFolder\axis2-$__axisVersion-war\axis2.war $__tempFolder\i2b2.war $true
+        unzip $__tempFolder\axis2-$__axisVersion-war\axis2.war $__tempFolder\i2b2 $true
 
-        mv -Force $__tempFolder\i2b2.war\ $env:JBOSS_HOME\webapps\
+        mv -Force $__tempFolder\i2b2\ $env:CATALINA_HOME\webapps\
 
-        echo "" > $env:JBOSS_HOME\webapps\i2b2.war.dodeploy
+        #echo "" > $env:JBOSS_HOME\webapps\i2b2.war.dodeploy
    
 
     }
@@ -168,10 +196,17 @@ function installTomcat($service=$true){
 	echo "Installing Tomcat"
  
     #This environment variable is required for Tomcat to run and to install as a service
-    setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
+    #setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
 
-	choco install tomcat -packageparameters '"/InstallLocation=$env:JBOSS_HOME"' -y -i -version 8.0.26
+	#$params = "/InstallLocation="" + $env:JBOSS_HOME +"""
+	#echo params: $params
+	choco install tomcat -packageparameters '$params' -y -i -version 8.0.26
 
+	
+	#this choco package does not update session so we do here
+	Update-SessionEnvironment
+	$env:JBOSS_HOME = $env:CATALINA_HOME
+	
     echo "Tomcat is installed."
 }
 
