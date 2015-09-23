@@ -109,12 +109,12 @@ if($InstallShrine -eq $true){
     . .\config-shrine.ps1
 }
 
- if((Test-Path $__rootFolder) -ne  $true){
+#if((Test-Path $__rootFolder) -ne  $true){
 
-    New-Item $__rootFolder -Type directory -Force > $null
+#    New-Item $__rootFolder -Type directory -Force > $null
 
-    echo "Created " + $__rootFolder
-}
+#    echo "Created " + $__rootFolder
+#}
 
 #Create a directory to work out of
 createTempFolder

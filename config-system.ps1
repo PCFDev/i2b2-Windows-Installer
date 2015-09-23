@@ -53,7 +53,7 @@ if([Environment]::Is64BitOperatingSystem -eq $true){
 
 #export JAVA_HOME="$__rootFolder\java"
 #export ANT_HOME="$__rootFolder\ant"
-export JBOSS_HOME="$__rootFolder\tomcat"
+#export JBOSS_HOME="$__rootFolder\tomcat"
 export NOPAUSE=1
 
 ##############################

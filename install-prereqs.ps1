@@ -48,15 +48,37 @@ function Update-SessionEnvironment{
 }
 #endregion Choco Functions
 
-function installJava{	
-	echo "Java Installing"
+function installJava{
 
+	#SLOPPY STUFF HERE... Why will $env:JAVA_HOME not update!!!
+	
+	echo "Java Installing"
+	echo "0) JAVA_HOME set to: $env:JAVA_HOME"
+	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
+	echo "0) JAVA_HOME set to: $jp" 
+	
 	choco install jdk7 -y
 
+	echo "1) JAVA_HOME set to: $env:JAVA_HOME"
+	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
+	echo "1) JAVA_HOME set to: $jp" 
+	
 	#this choco package does not update the session so we do it here to ensure java_home is set...	
 	Update-SessionEnvironment
   
-  
+	
+	if($env:JAVA_HOME -eq ''){
+		[Environment]::SetEnvironmentVariable("JAVA_HOME", ((Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome), "Machine")
+		#$javaDir = (Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome
+		#Set-EnvironmentVariable -Name "JAVA_HOME" -Value $javaDir -Scope 'Machine'
+	
+		Update-SessionEnvironment
+  	
+		echo "2) JAVA_HOME set to: $env:JAVA_HOME"
+		$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
+		echo "2) JAVA_HOME set to: $jp"
+	}
+	
 	echo "Java Installed"
 }
 
@@ -69,6 +91,7 @@ function installAnt {
 
         #addToPath "$env:ANT_HOME\bin;"
     }
+	echo "ANT_HOME set to: $env:ANT_HOME"
     echo "Ant Installed"
 }
 
@@ -136,7 +159,7 @@ function installAxis{
 	$__axisVersion = "1.6.1"
 	$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
 
-    if(!(Test-Path "$env:JBOSS_HOME\webapps\i2b2.war"))
+    if(!(Test-Path "$env:JBOSS_HOME\webapps\i2b2"))
     {
         
         echo "Downloading AXIS"
@@ -200,13 +223,17 @@ function installTomcat($service=$true){
 
 	#$params = "/InstallLocation="" + $env:JBOSS_HOME +"""
 	#echo params: $params
-	choco install tomcat -packageparameters '$params' -y -i -version 8.0.26
+	#choco install tomcat -packageparameters '$params' -y -i -version 8.0.26
 
+	choco install tomcat -y -i -version 8.0.26
 	
 	#this choco package does not update session so we do here
 	Update-SessionEnvironment
-	$env:JBOSS_HOME = $env:CATALINA_HOME
+	$env:JBOSS_HOME = $env:CATALINA_HOME\webapps
+	Update-SessionEnvironment
 	
+	echo "CATALINA_HOME set to: $env:CATALINA_HOME"
+	echo "JBOSS_HOME set to: $env:JBOSS_HOME"
     echo "Tomcat is installed."
 }
 
