@@ -27,7 +27,7 @@ $__antDownloadUrl = "http://archive.apache.org/dist/ant/binaries/$__antFolderNam
 $__jbossFolderName = "jboss-as-7.1.1.Final"
 $__jbossDownloadUrl = "http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/$__jbossFolderName.zip"
 
-$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/1.6.1//axis2-1.6.1-war.zip"
+$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/1.6.2/axis2-1.6.2-war.zip"
 
 #NOTE: PHP should run 32-bit Non-ThreadSafe version
 $__phpDownloadUrl = "http://windows.php.net/downloads/releases/php-5.5.29-nts-Win32-VC11-x86.zip"
