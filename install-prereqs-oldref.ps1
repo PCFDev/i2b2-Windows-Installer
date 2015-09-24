@@ -10,7 +10,6 @@
 #Install chocolatey https://chocolatey.org/
 function installChocolatey{
 	if ((Get-Command choco) -eq $null){
-		echo "Installing Chocolatey"
 		iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 	}
 }
@@ -94,7 +93,7 @@ function installJava{
 	
 	[Environment]::SetEnvironmentVariable("JAVA_HOME", $__java_home, "Machine")
 	
-	$env:JAVA_HOME = $__java_home
+	$end:JAVA_HOME = $__java_home
 
 	echo "2) JAVA_HOME set to: $env:JAVA_HOME"
 	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
@@ -117,38 +116,71 @@ function installAnt {
     echo "Ant Installed"
 }
 
-#Takes the boolean value $service for option to install tomcat service
-#$service is true by default
-function installTomcat($service=$true){
+function installJBoss{
+    if((test-path $env:JBOSS_HOME) -eq $false){
+      
+        echo "Downloading $__jbossDownloadUrl"
 
-	echo "Installing Tomcat"
- 
-    #This environment variable is required for Tomcat to run and to install as a service
-    #setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
+        wget $__jbossDownloadUrl -OutFile $__tempFolder\jboss.zip
+     
+        echo "JBOSS downloaded"
 
-	#$params = "/InstallLocation="" + $env:JBOSS_HOME +"""
-	#echo params: $params
-	#choco install tomcat -packageparameters '$params' -y -i -version 8.0.26
+        echo "Installing JBOSS"
 
-	choco install tomcat -y -i -version 7.0.59
-	
-	#this choco package does not update session so we do here
-	Update-SessionEnvironment
-	$env:JBOSS_HOME = "$env:CATALINA_HOME\webapps"
-	#Update-SessionEnvironment
-	
-	echo "CATALINA_HOME set to: $env:CATALINA_HOME"
-	echo "JBOSS_HOME set to: $env:JBOSS_HOME"
-    echo "Tomcat is installed."
+        unzip $__tempFolder\jboss.zip $env:JBOSS_HOME\..\
+
+        mv $env:JBOSS_HOME\..\$__jbossFolderName $env:JBOSS_HOME
+
+        mv $env:JBOSS_HOME\standalone\configuration\standalone.xml $env:JBOSS_HOME\standalone\configuration\standalone.xml.bak
+
+        interpolate_file skel\jboss\standalone.xml JBOSS_ADDRESS $JBOSS_ADDRESS |
+            interpolate JBOSS_PORT $JBOSS_PORT | 
+            Out-File -Encoding utf8 $env:JBOSS_HOME\standalone\configuration\standalone.xml
+    
+        addToPath "$env:JBOSS_HOME\bin;"
+
+    }
+    echo "JBOSS Installed"
 }
 
+function installJBossService{
+    $jbossSvc = Get-Service jboss*
+    if($jbossSvc -eq $null){
+        echo "Downloading $__jbossServiceDownloadUrl"
+    
+        wget $__jbossServiceDownloadUrl -OutFile $__tempFolder\jboss-svc.zip
+            
+        echo "JBOSS Service downloaded"
+
+        echo "Installing JBOSS Service"
+        
+        unzip $__tempFolder\jboss-svc.zip $env:JBOSS_HOME
+        
+        cp skel\jboss\service.bat $env:JBOSS_HOME\bin\service.bat -force
+    
+        &$env:JBOSS_HOME\bin\service.bat install
+
+        Set-Service jboss -StartupType Automatic
+       
+        echo "Adding management user to JBOSS"
+
+        $hashPass = hash ($JBOSS_ADMIN + ":ManagementRealm:" + $JBOSS_PASS)
+
+        $jbossUser = "$JBOSS_ADMIN=$hashPass" 
+
+        echo $jbossUser
+
+        echo ([Environment]::NewLine)$jbossUser |
+            Out-File  $env:JBOSS_HOME\standalone\configuration\mgmt-users.properties -Append -Encoding utf8
+    }
+    echo "JBOSS service installed"
+}
 
 function installAxis{
 	$__axisVersion = "1.6.1"
 	$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
 
-	echo "Checking for Axis: $env:JBOSS_HOME\i2b2"
-    if(!(Test-Path "$env:JBOSS_HOME\i2b2"))
+    if(!(Test-Path "$env:JBOSS_HOME\webapps\i2b2"))
     {
         
         echo "Downloading AXIS"
@@ -163,7 +195,10 @@ function installAxis{
   
         unzip $__tempFolder\axis2-$__axisVersion-war\axis2.war $__tempFolder\i2b2 $true
 
-        mv -Force $__tempFolder\i2b2 $env:CATALINA_HOME\webapps\
+        mv -Force $__tempFolder\i2b2\ $env:CATALINA_HOME\webapps\
+
+        #echo "" > $env:JBOSS_HOME\webapps\i2b2.war.dodeploy
+   
 
     }
 
@@ -198,6 +233,30 @@ function installPHP{
     echo "PHP Installed"
 }
 
+#Takes the boolean value $service for option to install tomcat service
+#$service is true by default
+function installTomcat($service=$true){
+
+	echo "Installing Tomcat"
+ 
+    #This environment variable is required for Tomcat to run and to install as a service
+    #setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
+
+	#$params = "/InstallLocation="" + $env:JBOSS_HOME +"""
+	#echo params: $params
+	#choco install tomcat -packageparameters '$params' -y -i -version 8.0.26
+
+	choco install tomcat -y -i -version 8.0.26
+	
+	#this choco package does not update session so we do here
+	Update-SessionEnvironment
+	$env:JBOSS_HOME = $env:CATALINA_HOME\webapps
+	Update-SessionEnvironment
+	
+	echo "CATALINA_HOME set to: $env:CATALINA_HOME"
+	echo "JBOSS_HOME set to: $env:JBOSS_HOME"
+    echo "Tomcat is installed."
+}
 
 installChocolatey
 installJava

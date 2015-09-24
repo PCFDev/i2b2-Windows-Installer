@@ -203,6 +203,30 @@ function installIM {
     echo "IM Cell Installed"
 }
 
+function copyCellsToTomcat{
+
+	echo "Should be copying cell stuff to proper tomcat folders..."
+	net stop tomcat7
+	
+	echo "Move configuration to correct folder"	
+	cp -Force $env:CATALINA_HOME\webapps\standalone\configuration\* $env:CATALINA_HOME\conf
+	
+	echo "Move lib files"
+	cp -Force $env:CATALINA_HOME\webapps\standalone\deployments\i2b2.war\WEB-INF\lib\*.jar $env:CATALINA_HOME\lib\ 
+	
+	echo "Move datasources and driver files" #working
+	cp -Force $env:CATALINA_HOME\webapps\standalone\deployments\*.xml $env:CATALINA_HOME\webapps\i2b2\
+	cp -Force $env:CATALINA_HOME\webapps\standalone\deployments\*.jar $env:CATALINA_HOME\webapps\i2b2\
+		
+	echo "Move war files"
+	cp -Force $env:CATALINA_HOME\webapps\standalone\deployments\i2b2.war\* $env:CATALINA_HOME\webapps\i2b2
+	
+	rm -Force -Recurse $env:CATALINA_HOME\webapps\standalone
+	
+	net start tomcat7
+	
+}
+
 function installWebClient{
     echo "Installing i2b2 webclient..."
     unzip $__webclientZipFile $__webclientInstallFolder $true
@@ -254,6 +278,8 @@ installCRC
 installWorkplace
 installFR
 installIM
+
+copyCellsToTomcat
 
 if($InstallWebClient -eq $true){
     installWebClient
