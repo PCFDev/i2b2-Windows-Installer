@@ -175,7 +175,7 @@ function installIIS {
 
     if($iis.State -ne "Enabled"){
         echo "Installing IIS"
-    
+		#choco install IIS-WebServerRole --source windowsfeature
         Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -NoRestart
     }
     echo "IIS Installed"
