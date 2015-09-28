@@ -109,16 +109,8 @@ if($InstallShrine -eq $true){
     . .\config-shrine.ps1
 }
 
-#if((Test-Path $__rootFolder) -ne  $true){
-
-#    New-Item $__rootFolder -Type directory -Force > $null
-
-#    echo "Created " + $__rootFolder
-#}
-
 #Create a directory to work out of
 createTempFolder
-
 
 if($EnableLogging -eq $true){
 	$Logging = $true
@@ -129,24 +121,30 @@ if($InstallPrereqs -eq $true){
 }
 
 if($InstallDatabases -eq $true){    
-    #. .\install-data.ps1
+    . .\install-data.ps1
 }
 
+
 if($InstallCells -eq $true){
+	$jboss = Get-Service -Name JBOSS -ErrorAction SilentlyContinue
+
+	if(($jboss.Length -gt 0) -and ($jboss.Status -ne "Stopped")) {       
+		Stop-Service $jboss
+	}
     . .\install-i2b2.ps1 
 }
 
 if($InstallShrine -eq $true){
-    #. .\install-shrine.ps1
+    . .\install-shrine.ps1
 }
 
 #clean up after ourself
-#removeTempFolder
+removeTempFolder
 
-#$jboss = Get-Service -Name JBOSS -ErrorAction SilentlyContinue
+$jboss = Get-Service -Name JBOSS -ErrorAction SilentlyContinue
 
-#if(($jboss.Length -gt 0) -and ($jboss.Status -eq "Stopped")) {       
-#    Start-Service $jboss
-#}
+if(($jboss.Length -gt 0) -and ($jboss.Status -eq "Stopped")) {       
+    Start-Service $jboss
+}
 
 formatElapsedTime $__timer.Elapsed

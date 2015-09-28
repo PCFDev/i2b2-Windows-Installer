@@ -49,152 +49,100 @@ function Update-SessionEnvironment{
 }
 #endregion Choco Functions
 
-function installJava-sloppy{
-
-	#SLOPPY STUFF HERE... Why will $env:JAVA_HOME not update!!!
-	
-	echo "Java Installing"
-	echo "0) JAVA_HOME set to: $env:JAVA_HOME"
-	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
-	echo "0) JAVA_HOME set to: $jp" 
-	
-	choco install jdk7 -y
-
-	echo "1) JAVA_HOME set to: $env:JAVA_HOME"
-	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
-	echo "1) JAVA_HOME set to: $jp" 
-	
-	#this choco package does not update the session so we do it here to ensure java_home is set...	
-	Update-SessionEnvironment
-  
-	
-	if($env:JAVA_HOME -eq ''){
-		[Environment]::SetEnvironmentVariable("JAVA_HOME", ((Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome), "Machine")
-		#$javaDir = (Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome
-		#Set-EnvironmentVariable -Name "JAVA_HOME" -Value $javaDir -Scope 'Machine'
-	
-		Update-SessionEnvironment
-  	
-		echo "2) JAVA_HOME set to: $env:JAVA_HOME"
-		$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
-		echo "2) JAVA_HOME set to: $jp"
-	}
-	
-	echo "Java Installed"
-}
-
-
 function installJava{
 
 	echo "Installing Java"
 	
 	choco install jdk7 -y
-		
-	$__java_home = ((Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome)
 	
-	[Environment]::SetEnvironmentVariable("JAVA_HOME", $__java_home, "Machine")
+	Update-SessionEnvironment
 	
-	$env:JAVA_HOME = $__java_home
-
-	echo "2) JAVA_HOME set to: $env:JAVA_HOME"
-	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
-	echo "2) JAVA_HOME set to: $jp"
-
+	echo "JAVA_HOME set to: $env:JAVA_HOME"
+	
+	if($env:JAVA_HOME -eq $null){
+		throw "JAVA_HOME not set"
+	}
 	echo "Java Installed"
 }
 
 
 function installAnt {
-	echo "Installing Ant"
+	echo "Installing Ant"	
+	choco install ant -yi
 	
-    if((isAntInstalled) -eq $false){
-
-		choco install ant -y -i
-
-        #addToPath "$env:ANT_HOME\bin;"
-    }
+	Update-SessionEnvironment
 	echo "ANT_HOME set to: $env:ANT_HOME"
+	
+	addToPath $env:ANT_HOME\bin		
     echo "Ant Installed"
 }
+
 
 #Takes the boolean value $service for option to install tomcat service
 #$service is true by default
 function installTomcat($service=$true){
 
 	echo "Installing Tomcat"
- 
-    #This environment variable is required for Tomcat to run and to install as a service
-    #setEnvironmentVariable "CATALINA_HOME" $_SHRINE_HOME\tomcat
-
-	#$params = "/InstallLocation="" + $env:JBOSS_HOME +"""
-	#echo params: $params
-	#choco install tomcat -packageparameters '$params' -y -i -version 8.0.26
 
 	choco install tomcat -y -i -version 7.0.59
 	
-	#this choco package does not update session so we do here
 	Update-SessionEnvironment
-	$env:JBOSS_HOME = "$env:CATALINA_HOME\webapps"
-	#Update-SessionEnvironment
 	
 	echo "CATALINA_HOME set to: $env:CATALINA_HOME"
-	echo "JBOSS_HOME set to: $env:JBOSS_HOME"
-    echo "Tomcat is installed."
+	echo "Tomcat is installed."
 }
 
 
+function installJBoss{
+	echo "Installing JBoss"
+	
+	#note: remove the source once the package is approved
+	choco install jboss-as -yi -params "/InstallationPath:$__jbossInstallFolder  /Username:$JBOSS_ADMIN /Password:$JBOSS_PASS /Start:false" -source $__skelDirectory
+	
+	Update-SessionEnvironment	
+	echo "JBOSS_HOME set to: $env:JBOSS_HOME"
+	
+	if($env:JBOSS_HOME -ne $__jbossInstallFolder){
+		throw "JBOSS_HOME not set"
+	}
+	
+	mv -force $env:JBOSS_HOME\standalone\configuration\standalone.xml $env:JBOSS_HOME\standalone\configuration\standalone.xml.bak
+
+	interpolate_file skel\jboss\standalone.xml JBOSS_ADDRESS $JBOSS_ADDRESS |
+		interpolate JBOSS_PORT $JBOSS_PORT | 
+		Out-File -Encoding utf8 $env:JBOSS_HOME\standalone\configuration\standalone.xml
+		
+	echo "JBoss Installed"
+}
+
 function installAxis{
-	$__axisVersion = "1.6.1"
-	$__axisDownloadUrl = "http://archive.apache.org/dist/axis/axis2/java/core/$__axisVersion/axis2-$__axisVersion-war.zip"
-
-	echo "Checking for Axis: $env:JBOSS_HOME\i2b2"
-    if(!(Test-Path "$env:JBOSS_HOME\i2b2"))
-    {
-        
-        echo "Downloading AXIS"
-       
-        wget $__axisDownloadUrl -OutFile $__tempFolder\axis2-$__axisVersion-war.zip
-      
-        echo "AXIS downloaded"
-
-        echo "Installing AXIS War"
-
-        unzip $__tempFolder\axis2-$__axisVersion-war.zip $__tempFolder\axis2-$__axisVersion-war $true
-  
-        unzip $__tempFolder\axis2-$__axisVersion-war\axis2.war $__tempFolder\i2b2 $true
-
-        mv -Force $__tempFolder\i2b2 $env:CATALINA_HOME\webapps\
-
-    }
+	echo "Installing AXIS War"
+	
+	#note: remove the source once the package is approved
+	choco install axis2-war -iy -version 1.6.1 -params "/InstallationPath: $env:JBOSS_HOME\standalone\deployments\i2b2.war" -source $__skelDirectory
+	
+	echo "" >  $env:JBOSS_HOME\standalone\deployments\i2b2.war.dodeploy
 
     echo "AXIS War Installed"
 }
 
 function installIIS {
+	echo "Installing IIS"
+	
     $iis =  Get-WindowsOptionalFeature -FeatureName IIS-WebServerRole -Online
 
     if($iis.State -ne "Enabled"){
-        echo "Installing IIS"
-		#choco install IIS-WebServerRole --source windowsfeature
         Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -NoRestart
     }
-    echo "IIS Installed"
+    
+	echo "IIS Installed"
 }
 
 function installPHP{
+	echo "Installing PHP"
 
-    if((Test-Path $__phpInstallFolder) -eq $false){
-
-
-        echo "Installing PHP"
-
-		choco install php -y
-		
-        #unzip $__tempFolder/php.zip $__phpInstallFolder
-        #cp $__skelDirectory\php\php.ini $__phpInstallFolder\php.ini
-     
-   
-    }
+	choco install php -y
+  
     echo "PHP Installed"
 }
 
@@ -203,20 +151,16 @@ installChocolatey
 installJava
 installAnt
 
-#if($InstallCells -eq $true){
-#    #installJBoss
-#    #installJBossService
-#	installTomcat
-#    installAxis
-#}
-installTomcat
-installAxis
+if($InstallCells -eq $true){
+    installJBoss
+    installAxis
+}
 
 if(($InstallWebClient -eq $true) -or ($InstallAdminTool -eq $true)){
     installIIS
     installPHP
 }
 
-#if($InstallShrine -eq $true){
-#    installTomcat
-#}
+if($InstallShrine -eq $true){
+    installTomcat
+}
