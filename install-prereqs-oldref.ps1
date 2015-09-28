@@ -93,7 +93,7 @@ function installJava{
 	
 	[Environment]::SetEnvironmentVariable("JAVA_HOME", $__java_home, "Machine")
 	
-	$end:JAVA_HOME = $__java_home
+	$env:JAVA_HOME = $__java_home
 
 	echo "2) JAVA_HOME set to: $env:JAVA_HOME"
 	$jp = [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
