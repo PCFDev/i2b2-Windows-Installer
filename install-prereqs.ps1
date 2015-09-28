@@ -1,11 +1,7 @@
-
-#require $env:JAVA_HOME "JAVA_HOME must be set"
-#require $env:ANT_HOME "ANT_HOME must be set"
-#require $env:JBOSS_HOME "JBOSS_HOME must be set"
-#require $JBOSS_ADDRESS "JBOSS_ADDRESS must be set"
-#require $JBOSS_PORT "JBOSS_PORT must be set"
-#require $JBOSS_ADMIN "JBOSS_ADMIN must be set"
-#require $JBOSS_PASS "JBOSS_PASS must be set"
+require $JBOSS_ADDRESS "JBOSS_ADDRESS must be set"
+require $JBOSS_PORT "JBOSS_PORT must be set"
+require $JBOSS_ADMIN "JBOSS_ADMIN must be set"
+require $JBOSS_PASS "JBOSS_PASS must be set"
 
 #Install chocolatey https://chocolatey.org/
 function installChocolatey{
@@ -55,8 +51,7 @@ function installJava{
 	
 	choco install jdk7 -y
 	
-	Update-SessionEnvironment
-	
+	Update-SessionEnvironment	
 	echo "JAVA_HOME set to: $env:JAVA_HOME"
 	
 	if($env:JAVA_HOME -eq $null){

@@ -59,11 +59,11 @@ Param(
 
     [parameter(Mandatory=$false)]
 	[alias("d")]
-	[bool]$InstallDatabases=$false,
+	[bool]$InstallDatabases=$true,
 
     [parameter(Mandatory=$false)]
 	[alias("demo")]
-	[bool]$InstallDemoData=$false,
+	[bool]$InstallDemoData=$true,
 
     [parameter(Mandatory=$false)]
 	[alias("c")]
@@ -71,11 +71,11 @@ Param(
 
     [parameter(Mandatory=$false)]
 	[alias("w")]
-	[bool]$InstallWebClient=$false,
+	[bool]$InstallWebClient=$true,
 
     [parameter(Mandatory=$false)]
 	[alias("a")]
-	[bool]$InstallAdminTool=$false,
+	[bool]$InstallAdminTool=$true,
     
     [parameter(Mandatory=$false)]
 	[alias("s")]
@@ -100,7 +100,7 @@ Param(
     April 14, 2015
 #>
 $__timer = [Diagnostics.Stopwatch]::StartNew()
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
+
 . .\functions.ps1
 . .\config-system.ps1
 . .\config-i2b2.ps1
