@@ -14,7 +14,7 @@ $I2B2_PROJECT_NAME="demo"
 
 #Location of the i2b2 web services
 $DEFAULT_I2B2_SERVER = "localhost"
-$DEFAULT_I2B2_SERVICE_URL="http://" + $DEFAULT_I2B2_SERVER + ":9090/i2b2/services"
+$DEFAULT_I2B2_SERVICE_URL="http://" + $DEFAULT_I2B2_SERVER + ":" + $JBOSS_PORT  + "/i2b2/services"
 $PM_SERVICE_URL="$DEFAULT_I2B2_SERVICE_URL/PMService"
 $CRC_SERVICE_URL="$DEFAULT_I2B2_SERVICE_URL/QueryToolService"
 $FR_SERVICE_URL="$DEFAULT_I2B2_SERVICE_URL/FRService"
@@ -25,13 +25,13 @@ $I2B2_SERVICEACCOUNT_USER="AGG_SERVICE_ACCOUNT"
 $I2B2_SERVICEACCOUNT_PASS="demouser"
 
 #Database configuration
-$DEFAULT_DB_SERVER="localhost"
+$DEFAULT_DB_SERVER="localhost\sqlexpress"
 
 #THESE ARE USED TO CREATE DATABASES, NEEDS TO HAVE ADMIN ACCESS TO DB SERVER
 $DEFAULT_DB_ADMIN_USER="admin" #<== THIS IS NOT SET
 $DEFAULT_DB_ADMIN_PASS="password" #<== THIS IS NOT SET
 
-$DEFAULT_DB_URL="jdbc:sqlserver://localhost:1433" #+ $DEFAULT_DB_SERVER  #If NOT using SQLEXPRESS need to include the port number: + ":1433"
+$DEFAULT_DB_URL="jdbc:sqlserver://localhost:1433;instanceName=sqlexpress" #+ $DEFAULT_DB_SERVER  #If NOT using SQLEXPRESS need to include the port number: + ":1433"
 $DEFAULT_DB_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver"
 $DEFAULT_DB_JAR_FILE="sqljdbc4.jar"
 $DEFAULT_DB_TYPE="SQLServer"

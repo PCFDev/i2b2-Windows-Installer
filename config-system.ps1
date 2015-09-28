@@ -3,12 +3,13 @@ echo "Loading system configuration"
 ##############################
 #DO NOT EDIT: SYSTEM VARIABLES
 ##############################
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 $OutputEncoding=[System.Text.UTF8Encoding]::UTF8
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
-$__rootFolder = "c:\opt"
-
-$__phpInstallFolder = "C:\php"
+$__jbossInstallFolder = "c:\opt\jboss"
 $__webclientInstallFolder = "c:\inetpub\wwwroot"
+
 $__logFileName = "$(Get-Date -Format g)_i2b2_install.log"
 $__currentDirectory = (Get-Item -Path ".\" -Verbose).FullName
 $__skelDirectory = $__currentDirectory + "\skel"
@@ -20,6 +21,9 @@ $__sourceCodeZipFile = $__skelDirectory + "\i2b2\i2b2core-src-1704.zip"
 $__dataInstallationZipFile = $__skelDirectory + "\i2b2\i2b2createdb-1704.zip"
 $__webclientZipFile = $__skelDirectory + "\i2b2\i2b2webclient-1704.zip"
 
+<<<<<<< HEAD
+setEnvironmentVariable NOPAUSE 1
+=======
 
 $__antFolderName = "apache-ant-1.9.5"
 $__antDownloadUrl = "http://archive.apache.org/dist/ant/binaries/$__antFolderName-bin.zip"
@@ -54,6 +58,7 @@ export JAVA_HOME="$__rootFolder\java"
 export ANT_HOME="$__rootFolder\ant"
 export JBOSS_HOME="$__rootFolder\jboss"
 export NOPAUSE=1
+>>>>>>> master
 
 ##############################
 #END SYSTEM VARIABLES

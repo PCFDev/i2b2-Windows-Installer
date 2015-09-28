@@ -1,10 +1,8 @@
-﻿Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-	if($Logging -eq $true){
-		Add-Content "`n" + "Importing functions"
-	}
-    echo "Importing functions"
-
+﻿
+if($Logging -eq $true){
+	Add-Content "`n" + "Importing functions"
+}
+echo "Importing functions"
 
 function exec{
     Param(
@@ -56,20 +54,6 @@ function setEnvironmentVariable($name, $value){
     [System.Environment]::SetEnvironmentVariable($name, $value, 'process')
 }
 
-function export ([string]$variableAndValue){
-<#
-    .SYNOPSIS give support for bash style syntax: export VARNAME=VALUE
-#>
-
-    $arr = $variableAndValue.Split("=");
-    
-    $varName = $arr[0]
-    $value = $arr[1]
-
-    setEnvironmentVariable $varName $value
-   
-}
-
 function require($value, [string]$message = "value cannot be null"){
     
     if($value -eq $null){
@@ -79,8 +63,6 @@ function require($value, [string]$message = "value cannot be null"){
 }
 
 function addToPath($pathToAppend){
-
-
 
     if(![System.Environment]::GetEnvironmentVariable("PATH").Contains($pathToAppend)){
 
@@ -102,53 +84,6 @@ function addToPath($pathToAppend){
 
 }
 
-function isAntInstalled {    
-    <#    
-    .SYNOPSIS Check it see if ant is installed
-    #>    
-    try{
-        
-        $out = &"ant" -version 2>&1
-        $antver = $out[0].tostring();
-
-        return  ($antver -gt "")
-
-    }catch {
-        return $false
-    }
-}
-
-function isJavaInstalled {    
-    <#    
-    .SYNOPSIS Check it see if Java is installed
-    #>    
-  
-    try{
-
-        $java = Get-WmiObject -Class win32_product | where { $_.Name -like "*Java SE Development Kit 7*"}
-
-        return ($java.Count -gt 0)
-
-    } catch {
-        return $false
-    }
-}
-
-
-function getJavaFolder {
-	    <#    
-    .SYNOPSIS Locate correct Java 7 Folder
-    #> 
-
-	$javaLoc = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\javaws.exe" -name "path").Path
-	$prepend = (Get-Item -Path $javaLoc).Parent.Parent.FullName
-	$append = Get-ChildItem -Path $prepend -Filter apt.exe -Recurse -Name
-	$javaFolder = "$prepend\$append"
-
-	$javaFolder = (Get-Item -Path $java.TrimEnd("apt.exe")).Parent.FullName
-
-	return $javaFolder
-}
 
 function removeTempFolder{  
 
