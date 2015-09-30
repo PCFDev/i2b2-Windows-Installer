@@ -49,9 +49,10 @@ function installJava{
 
 	echo "Installing Java"
 	
-	choco install jdk7 -y
+	choco install jdk7 -y -version 7.0.79
 	
-	Update-SessionEnvironment	
+	Update-SessionEnvironment
+	
 	echo "JAVA_HOME set to: $env:JAVA_HOME"
 	
 	$env:JAVA_HOME = (Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome
