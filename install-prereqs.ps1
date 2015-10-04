@@ -141,7 +141,23 @@ function installPHP{
 
 	choco install php -y
   
-    echo "PHP Installed"
+	echo "Configuring IIS"
+	
+	#Reference: http://php.net/manual/en/install.windows.iis7.php
+	$cgi = Get-WindowsOptionalFeature -FeatureName IIS-CGI -Online
+	
+	if($cgi.State -ne "Enabled"){
+		Enable-WindowsOptionalFeature -FeatureName IIS-CGI -Online -NoRestart
+    }
+	
+    #Creating IIS FastCGI process pool
+    & $env:WinDir\system32\inetsrv\appcmd.exe set config -section:system.webServer/fastCgi /+"[fullPath='c:\php\php-cgi.exe']" /commit:apphost
+    
+    #Creating handler mapping for PHP requests      
+    & $env:WinDir\system32\inetsrv\appcmd.exe set config  -section:system.webServer/handlers /+"[name='PHP-FastCGI',path='*.php',verb='GET,HEAD,POST',modules='FastCgiModule',scriptProcessor='c:\php\php-cgi.exe',resourceType='Either']"	
+
+	echo "IIS Configured"
+	echo "PHP Installed"
 }
 
 
