@@ -143,12 +143,20 @@ function installIIS {
 function installPHP{
 	echo "Installing PHP"
 
+	choco install vcredist2012 -y #need vc++ redist package
 	choco install php -y
   
-	echo "Configuring IIS"
+	cp $__skelDirectory\php\php.ini "c:\tools\php\php.ini" -force #enable curl
 	
-	#Reference: http://php.net/manual/en/install.windows.iis7.php
-
+	echo "Configuring IIS"
+	    
+	#enable required IIS freatures
+	#$cgi =  Get-WindowsOptionalFeature -FeatureName IIS-CGI -Online
+	Enable-WindowsOptionalFeature -Online -FeatureName IIS-CGI -NoRestart
+	Enable-WindowsOptionalFeature -Online -FeatureName IIS-ISAPIExtensions -NoRestart
+	Enable-WindowsOptionalFeature -Online -FeatureName IIS-ISAPIFilter -NoRestart
+	
+	#Reference: http://php.net/manual/en/install.windows.iis7.php	
     #Creating IIS FastCGI process pool
     & $env:WinDir\system32\inetsrv\appcmd.exe set config -section:system.webServer/fastCgi /+"[fullPath='c:\tools\php\php-cgi.exe']" /commit:apphost
     
