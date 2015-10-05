@@ -53,9 +53,13 @@ function installJava{
 	
 	Update-SessionEnvironment
 	
+	
+	$env:JAVA_HOME = Join-Path (Get-Item "Env:ProgramFiles").Value "Java\jdk1.7.0_79"
+	
+	
 	echo "JAVA_HOME set to: $env:JAVA_HOME"
 	
-	$env:JAVA_HOME = (Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome
+	#$env:JAVA_HOME = (Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome
 	
 	if($env:JAVA_HOME -eq $null){
 		throw "JAVA_HOME not set"
@@ -144,17 +148,12 @@ function installPHP{
 	echo "Configuring IIS"
 	
 	#Reference: http://php.net/manual/en/install.windows.iis7.php
-	$cgi = Get-WindowsOptionalFeature -FeatureName IIS-CGI -Online
-	
-	if($cgi.State -ne "Enabled"){
-		Enable-WindowsOptionalFeature -FeatureName IIS-CGI -Online -NoRestart
-    }
-	
+
     #Creating IIS FastCGI process pool
-    & $env:WinDir\system32\inetsrv\appcmd.exe set config -section:system.webServer/fastCgi /+"[fullPath='c:\php\php-cgi.exe']" /commit:apphost
+    & $env:WinDir\system32\inetsrv\appcmd.exe set config -section:system.webServer/fastCgi /+"[fullPath='c:\tools\php\php-cgi.exe']" /commit:apphost
     
     #Creating handler mapping for PHP requests      
-    & $env:WinDir\system32\inetsrv\appcmd.exe set config  -section:system.webServer/handlers /+"[name='PHP-FastCGI',path='*.php',verb='GET,HEAD,POST',modules='FastCgiModule',scriptProcessor='c:\php\php-cgi.exe',resourceType='Either']"	
+    & $env:WinDir\system32\inetsrv\appcmd.exe set config  -section:system.webServer/handlers /+"[name='PHP-FastCGI',path='*.php',verb='GET,HEAD,POST',modules='FastCgiModule',scriptProcessor='c:\tools\php\php-cgi.exe',resourceType='Either']"	
 
 	echo "IIS Configured"
 	echo "PHP Installed"
