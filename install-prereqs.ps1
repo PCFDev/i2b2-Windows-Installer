@@ -54,12 +54,16 @@ function installJava{
 	Update-SessionEnvironment
 	
 	
-	$env:JAVA_HOME = Join-Path (Get-Item "Env:ProgramFiles").Value "Java\jdk1.7.0_79"
+	$java_home = Join-Path (Get-Item "Env:ProgramFiles").Value "Java\jdk1.7.0_79"
 	
+	setEnvironmentVariable "JAVA_HOME" $java_home
 	
 	echo "JAVA_HOME set to: $env:JAVA_HOME"
+
+
+	#$env:JAVA_HOME = $java_home
+	#echo "JAVA_HOME set (again) to: $env:JAVA_HOME"
 	
-	#$env:JAVA_HOME = (Get-ItemProperty -path "HKLM:\SOFTWARE\JavaSoft\Java Development Kit\1.7.0_79" -name "JavaHome") | select -expandproperty JavaHome
 	
 	if($env:JAVA_HOME -eq $null){
 		throw "JAVA_HOME not set"
