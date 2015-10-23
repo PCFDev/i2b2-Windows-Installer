@@ -7,7 +7,8 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $OutputEncoding=[System.Text.UTF8Encoding]::UTF8
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
-$__jbossInstallFolder = "c:\opt\jboss"
+$__rootFolder = "c:\opt"
+$__jbossInstallFolder = $__rootFolder + "\jboss"
 $__webclientInstallFolder = "c:\inetpub\wwwroot"
 
 $__logFileName = "$(Get-Date -Format g)_i2b2_install.log"
